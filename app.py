@@ -21,256 +21,314 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Enhanced CSS for beautiful, dynamic design
+# Cinematic CSS for stunning UX
 st.markdown("""
 <style>
-    .main-header {
-        font-size: 3rem;
-        font-weight: bold;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Cinematic Header */
+    .cinematic-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        font-size: 4rem;
+        font-weight: 900;
         text-align: center;
-        margin-bottom: 2rem;
-        animation: fadeIn 2s ease-in;
+        margin: 2rem 0;
+        animation: cinematicGlow 3s ease-in-out infinite alternate;
+        text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
     }
     
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
+    @keyframes cinematicGlow {
+        0% { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.8)); }
+        100% { filter: drop-shadow(0 0 40px rgba(240, 147, 251, 0.8)); }
     }
     
-    .level-up-badge {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-        color: white;
-        padding: 0.5rem 1rem;
+    /* Live Cam Container */
+    .live-cam-frame {
+        background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+        border: 3px solid #00ff88;
         border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: bold;
-        display: inline-block;
-        margin: 0.2rem;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        animation: pulse 2s infinite;
+        padding: 2rem;
+        margin: 2rem 0;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 50px rgba(0, 255, 136, 0.3);
+        animation: scanline 2s linear infinite;
     }
     
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
+    .live-cam-frame::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00ff88, transparent);
+        animation: scanline 2s linear infinite;
     }
     
-    .challenge-alignment {
-        background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: bold;
-        display: inline-block;
-        margin: 0.2rem;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    @keyframes scanline {
+        0% { left: -100%; }
+        100% { left: 100%; }
     }
     
-    .roi-highlight {
-        background: linear-gradient(135deg, #45b7d1 0%, #96c93d 100%);
-        color: white;
-        padding: 1rem;
-        border-radius: 15px;
-        font-size: 1.2rem;
-        font-weight: bold;
-        text-align: center;
-        margin: 1rem 0;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        animation: slideIn 1s ease-out;
-    }
-    
-    @keyframes slideIn {
-        from { transform: translateX(-100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    
-    .citizen-story {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border-left: 4px solid #007bff;
-        padding: 1rem;
-        margin: 1rem 0;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        transition: transform 0.3s ease;
-    }
-    
-    .citizen-story:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    }
-    
-    .midjourney-viz {
-        border: 2px solid #e9ecef;
-        border-radius: 15px;
-        padding: 1rem;
-        margin: 1rem 0;
+    /* Agent Cards */
+    .agent-card-cinematic {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin: 1rem 0;
         color: white;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        animation: zoomIn 0.5s ease-out;
-    }
-    
-    @keyframes zoomIn {
-        from { transform: scale(0.8); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-    
-    .agent-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        border-radius: 15px;
-        padding: 1rem;
-        margin: 0.5rem 0;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        border-left: 4px solid #007bff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
     
-    .agent-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    .agent-card-cinematic::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s ease;
     }
     
-    .live-cam-container {
-        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    .agent-card-cinematic:hover::before {
+        left: 100%;
+    }
+    
+    .agent-card-cinematic:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    
+    /* Phase Transitions */
+    .phase-transition {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
         border-radius: 15px;
         padding: 1rem;
         margin: 1rem 0;
         color: white;
         text-align: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        animation: phasePulse 1s ease-in-out;
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
     }
     
-    .handoff-arrow {
-        text-align: center;
-        font-size: 2rem;
-        margin: 1rem 0;
-        animation: bounce 1s infinite;
+    @keyframes phasePulse {
+        0% { transform: scale(0.8); opacity: 0; }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
     }
     
-    @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-        40% { transform: translateY(-10px); }
-        60% { transform: translateY(-5px); }
-    }
-    
-    .roi-gauge {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    /* ROI Gauge */
+    .roi-gauge-cinematic {
+        background: conic-gradient(from 0deg, #00ff88 0deg, #00ff88 180deg, #333 180deg, #333 360deg);
         border-radius: 50%;
-        width: 120px;
-        height: 120px;
+        width: 150px;
+        height: 150px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
         font-weight: bold;
-        font-size: 1.5rem;
-        margin: 1rem auto;
-        animation: rotate 2s linear infinite;
+        font-size: 2rem;
+        margin: 2rem auto;
+        position: relative;
+        animation: gaugeSpin 2s ease-out;
+        box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
     }
     
-    @keyframes rotate {
+    @keyframes gaugeSpin {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
     }
     
-    .success-animation {
-        animation: successPulse 0.5s ease-out;
+    /* Success Animation */
+    .success-explosion {
+        animation: successExplosion 0.8s ease-out;
+        background: linear-gradient(135deg, #00ff88 0%, #00d4aa 100%);
+        border-radius: 15px;
+        padding: 1rem;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.5rem;
+        box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
     }
     
-    @keyframes successPulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-        100% { transform: scale(1); }
+    @keyframes successExplosion {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    /* Interactive Buttons */
+    .cinematic-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cinematic-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
+    }
+    
+    .cinematic-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .cinematic-button:hover::before {
+        left: 100%;
+    }
+    
+    /* Data Visualization Cards */
+    .data-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        color: white;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .data-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    }
+    
+    /* Progress Bars */
+    .progress-cinematic {
+        background: linear-gradient(90deg, #00ff88, #00d4aa);
+        height: 8px;
+        border-radius: 4px;
+        animation: progressFill 2s ease-out;
+        box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+    
+    @keyframes progressFill {
+        from { width: 0%; }
+        to { width: 100%; }
+    }
+    
+    /* Floating Elements */
+    .floating-element {
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    /* Glitch Effect */
+    .glitch {
+        position: relative;
+        animation: glitch 0.3s ease-in-out;
+    }
+    
+    @keyframes glitch {
+        0% { transform: translate(0); }
+        20% { transform: translate(-2px, 2px); }
+        40% { transform: translate(-2px, -2px); }
+        60% { transform: translate(2px, 2px); }
+        80% { transform: translate(2px, -2px); }
+        100% { transform: translate(0); }
     }
 </style>
 """, unsafe_allow_html=True)
 
 def main():
-    # Header with animated gradient
-    st.markdown('<h1 class="main-header">🏙️ SF Neural Precog Network</h1>', unsafe_allow_html=True)
-    st.markdown("### Predictive AI System for San Francisco Civic Improvement")
+    # Cinematic header
+    st.markdown('<h1 class="cinematic-header">🏙️ SF Neural Precog Network</h1>', unsafe_allow_html=True)
+    st.markdown('<h2 style="text-align: center; color: #667eea; margin-bottom: 2rem;">🎬 Predictive AI System for San Francisco Civic Improvement</h2>', unsafe_allow_html=True)
     
-    # Challenge alignment badges with animations
+    # Challenge alignment with floating animation
     st.markdown("### 🎯 Hackathon Challenge Alignment")
     col1, col2, col3, col4, col5 = st.columns(5)
     
-    with col1:
-        st.markdown('<div class="challenge-alignment">🏠 Housing & Infrastructure</div>', unsafe_allow_html=True)
-    with col2:
-        st.markdown('<div class="challenge-alignment">🌳 Street Order & Beauty</div>', unsafe_allow_html=True)
-    with col3:
-        st.markdown('<div class="challenge-alignment">🔍 Transparency & Efficiency</div>', unsafe_allow_html=True)
-    with col4:
-        st.markdown('<div class="challenge-alignment">👶 Children & Education</div>', unsafe_allow_html=True)
-    with col5:
-        st.markdown('<div class="challenge-alignment">🏢 Industry & Commerce</div>', unsafe_allow_html=True)
+    challenges = [
+        ("🏠", "Housing & Infrastructure"),
+        ("🌳", "Street Order & Beauty"),
+        ("🔍", "Transparency & Efficiency"),
+        ("👶", "Children & Education"),
+        ("🏢", "Industry & Commerce")
+    ]
+    
+    for i, (icon, challenge) in enumerate(challenges):
+        with [col1, col2, col3, col4, col5][i]:
+            st.markdown(f'<div class="floating-element" style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 1rem; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">{icon} {challenge}</div>', unsafe_allow_html=True)
     
     # Main navigation with enhanced tabs
     tab1, tab2, tab3, tab4 = st.tabs(["🎮 Live Simulation", "👥 Citizen Dashboard", "🎨 Future Visualizations", "📊 Transparency"])
     
     with tab1:
-        run_live_simulation()
+        run_cinematic_simulation()
     
     with tab2:
-        display_citizen_dashboard()
+        display_cinematic_citizen_dashboard()
     
     with tab3:
-        display_future_visualizations()
+        display_cinematic_future_visualizations()
     
     with tab4:
-        display_transparency()
+        display_cinematic_transparency()
 
-def run_live_simulation():
-    """Run the live simulation with enhanced dynamic UX."""
+def run_cinematic_simulation():
+    """Run the simulation with cinematic UX."""
     
-    st.markdown("## 🎮 Live Simulation")
+    st.markdown('<h2 style="text-align: center; color: #667eea; margin: 2rem 0;">🎬 Live Simulation</h2>', unsafe_allow_html=True)
     
-    # Sidebar for controls
-    st.sidebar.title("🎛️ Control Panel")
+    # Sidebar controls
+    st.sidebar.markdown('<h3 style="color: #667eea;">🎛️ Control Panel</h3>', unsafe_allow_html=True)
     
-    # Scenario selection
     scenario = st.sidebar.selectbox(
         "Select Scenario",
         ["Housing Crisis Response", "Street Maintenance Optimization", "Budget Allocation", "Crisis Management", "Full System Demo"]
     )
     
-    # Location selection
     location = st.sidebar.selectbox(
         "Select Location",
         ["San Francisco", "Mission District", "Tenderloin", "Downtown", "Castro District"]
     )
     
-    # Weather data (simulated)
     weather_data = {
-        'temperature': st.sidebar.slider("Temperature (°F)", 50, 90, 65),
-        'rain_probability': st.sidebar.slider("Rain Probability", 0.0, 1.0, 0.3),
-        'wind_speed': st.sidebar.slider("Wind Speed (mph)", 0, 30, 10)
+        'temperature': st.sidebar.slider("🌡️ Temperature (°F)", 50, 90, 65),
+        'rain_probability': st.sidebar.slider("🌧️ Rain Probability", 0.0, 1.0, 0.3),
+        'wind_speed': st.sidebar.slider("💨 Wind Speed (mph)", 0, 30, 10)
     }
     
-    # Run simulation button with enhanced styling
-    if st.sidebar.button("🚀 Run Predictive Chain", type="primary", use_container_width=True):
-        run_dynamic_simulation(scenario, location, weather_data)
+    # Cinematic run button
+    if st.sidebar.button("🚀 LAUNCH PREDICTIVE CHAIN", type="primary", use_container_width=True):
+        run_cinematic_coordination(scenario, location, weather_data)
     
-    # Agent status display with enhanced visuals
-    st.sidebar.markdown("### 🤖 Agent Status")
-    display_enhanced_agent_status()
-    
-    # Level-up features showcase
-    st.sidebar.markdown("### 🎯 Level-Up Features")
-    st.markdown("""
-    - **🎥 Live Cam Integration**: Real-time street monitoring
-    - **🔄 Smooth Handoffs**: Animated agent transitions
-    - **🎨 MidJourney Visualizations**: Future SF scenarios
-    - **👥 Citizen Engagement**: Interactive polls and stories
-    - **📊 Dynamic ROI Gauges**: Real-time impact metrics
-    """)
+    # Agent status with cinematic styling
+    st.sidebar.markdown('<h3 style="color: #667eea;">🤖 Agent Status</h3>', unsafe_allow_html=True)
+    display_cinematic_agent_status()
 
-def run_dynamic_simulation(scenario: str, location: str, weather_data: dict):
-    """Run the simulation with dynamic UX elements."""
+def run_cinematic_coordination(scenario: str, location: str, weather_data: dict):
+    """Run coordination with cinematic effects."""
     
     # Initialize orchestrator
     orchestrator = Orchestrator()
@@ -283,166 +341,146 @@ def run_dynamic_simulation(scenario: str, location: str, weather_data: dict):
         'timestamp': datetime.now().isoformat()
     }
     
-    # Create main layout
+    # Create cinematic layout
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        # Live cam simulation
-        st.markdown('<div class="live-cam-container">', unsafe_allow_html=True)
-        st.markdown("### 📹 Live Cam Feed")
+        # Live cam simulation with cinematic effects
+        st.markdown('<div class="live-cam-frame">', unsafe_allow_html=True)
+        st.markdown('<h3 style="color: #00ff88; text-align: center;">📹 LIVE CAM FEED</h3>', unsafe_allow_html=True)
         
-        # Simulate video buffering
-        with st.spinner("🎥 Buffering live cam feed..."):
+        # Cinematic buffering
+        with st.spinner("🎥 INITIALIZING LIVE CAM FEED..."):
             time.sleep(2)
         
-        # Mock video placeholder (in real implementation, would use st.video with local MP4)
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); 
-                    border-radius: 10px; padding: 2rem; text-align: center; color: white;">
-            🎥 Live SF Street Cam
+        # Mock video with cinematic styling
+        st.markdown(f"""
+        <div style="background: linear-gradient(45deg, #1a1a1a, #2d2d2d); 
+                    border: 2px solid #00ff88; border-radius: 15px; 
+                    padding: 3rem; text-align: center; color: #00ff88; 
+                    font-family: 'Courier New', monospace; font-size: 1.2rem;">
+            🎥 LIVE SF STREET CAM
             <br><br>
-            Analyzing {location} in real-time...
+            📍 ANALYZING: {location.upper()}
             <br><br>
-            <div style="font-size: 0.8rem; opacity: 0.8;">
-            Detecting patterns, monitoring conditions, 
-            <br>identifying issues for predictive response
+            🔍 DETECTING PATTERNS...
+            <br>
+            📊 MONITORING CONDITIONS...
+            <br>
+            🎯 IDENTIFYING ISSUES...
+            <br><br>
+            <div style="font-size: 0.9rem; opacity: 0.8;">
+            REAL-TIME PREDICTIVE RESPONSE
             </div>
         </div>
-        """.format(location=location), unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
     
     with col2:
-        # Real-time metrics
-        st.markdown("### 📊 Live Metrics")
+        # Real-time metrics with cinematic styling
+        st.markdown('<h3 style="color: #667eea;">📊 LIVE METRICS</h3>', unsafe_allow_html=True)
         
         # Animated ROI gauge
-        roi_value = 2.5  # Mock ROI value
+        roi_value = 2.5
         st.markdown(f"""
-        <div class="roi-gauge">
+        <div class="roi-gauge-cinematic">
             {roi_value:.1f}x
             <br><small>ROI</small>
         </div>
         """, unsafe_allow_html=True)
         
-        # Agent confidence meters
+        # Agent confidence with cinematic progress bars
         agents = ['Street Precog', 'Housing Oracle', 'Budget Prophet', 'Crisis Sage']
         confidences = [0.85, 0.78, 0.92, 0.88]
         
         for agent, conf in zip(agents, confidences):
             color = "🟢" if conf > 0.8 else "🟡" if conf > 0.6 else "🔴"
             st.markdown(f"{color} **{agent}**")
-            st.progress(conf)
+            st.markdown(f'<div class="progress-cinematic" style="width: {conf*100}%;"></div>', unsafe_allow_html=True)
             st.markdown(f"Confidence: {conf:.1%}")
     
-    # Run coordination with animations
+    # Run coordination with cinematic phases
     try:
-        # Phase 1: Detection with video buffering
-        st.markdown("### 🔍 Phase 1: Detection")
-        with st.spinner("🎥 Analyzing live cam feed..."):
-            time.sleep(1.5)
+        phases = [
+            ("🔍", "DETECTION", "🎥 ANALYZING LIVE CAM FEED..."),
+            ("🔮", "PREDICTION", "🔮 FORECASTING FUTURE SCENARIOS..."),
+            ("🛡️", "PREVENTION", "🛡️ GENERATING PREVENTION STRATEGIES..."),
+            ("💰", "ROI OPTIMIZATION", "💰 CALCULATING OPTIMAL RETURNS..."),
+            ("🎨", "FUTURE VISUALIZATIONS", "🎨 GENERATING MIDJOURNEY SCENARIOS..."),
+            ("👥", "CITIZEN ENGAGEMENT", "👥 COLLECTING CITIZEN FEEDBACK..."),
+            ("📡", "BROADCASTING", "📡 BROADCASTING RESULTS...")
+        ]
         
-        # Handoff animation
-        st.markdown('<div class="handoff-arrow">⬇️</div>', unsafe_allow_html=True)
+        for i, (icon, phase, message) in enumerate(phases):
+            # Phase transition with cinematic effect
+            st.markdown(f'<div class="phase-transition">{icon} PHASE {i+1}: {phase}</div>', unsafe_allow_html=True)
+            
+            with st.spinner(message):
+                time.sleep(1.5)
+            
+            # Handoff animation
+            if i < len(phases) - 1:
+                st.markdown('<div style="text-align: center; font-size: 2rem; margin: 1rem 0; animation: bounce 1s infinite;">⬇️</div>', unsafe_allow_html=True)
         
-        # Phase 2: Prediction
-        st.markdown("### 🔮 Phase 2: Prediction")
-        with st.spinner("🔮 Forecasting future scenarios..."):
-            time.sleep(1.5)
-        
-        st.markdown('<div class="handoff-arrow">⬇️</div>', unsafe_allow_html=True)
-        
-        # Phase 3: Prevention
-        st.markdown("### 🛡️ Phase 3: Prevention")
-        with st.spinner("🛡️ Generating prevention strategies..."):
-            time.sleep(1.5)
-        
-        st.markdown('<div class="handoff-arrow">⬇️</div>', unsafe_allow_html=True)
-        
-        # Phase 4: ROI Optimization
-        st.markdown("### 💰 Phase 4: ROI Optimization")
-        with st.spinner("💰 Calculating optimal returns..."):
-            time.sleep(1.5)
-        
-        st.markdown('<div class="handoff-arrow">⬇️</div>', unsafe_allow_html=True)
-        
-        # Phase 5: Visualization
-        st.markdown("### 🎨 Phase 5: Future Visualizations")
-        with st.spinner("🎨 Generating MidJourney scenarios..."):
-            time.sleep(1.5)
-        
-        st.markdown('<div class="handoff-arrow">⬇️</div>', unsafe_allow_html=True)
-        
-        # Phase 6: Citizen Engagement
-        st.markdown("### 👥 Phase 6: Citizen Engagement")
-        with st.spinner("👥 Collecting citizen feedback..."):
-            time.sleep(1.5)
-        
-        st.markdown('<div class="handoff-arrow">⬇️</div>', unsafe_allow_html=True)
-        
-        # Phase 7: Broadcasting
-        st.markdown("### 📡 Phase 7: Broadcasting")
-        with st.spinner("📡 Broadcasting results..."):
-            time.sleep(1.5)
-        
-        # Success animation
-        st.markdown('<div class="success-animation">✅ Simulation completed successfully!</div>', unsafe_allow_html=True)
+        # Success explosion
+        st.markdown('<div class="success-explosion">✅ SIMULATION COMPLETED SUCCESSFULLY!</div>', unsafe_allow_html=True)
         
         # Run actual coordination
         results = orchestrator.coordinate_agents(scenario_data)
         
-        # Display results with enhanced visuals
-        display_dynamic_results(results, scenario, location)
+        # Display results with cinematic styling
+        display_cinematic_results(results, scenario, location)
         
     except Exception as e:
         st.error(f"❌ Error during simulation: {str(e)}")
 
-def display_dynamic_results(results: dict, scenario: str, location: str):
-    """Display results with dynamic, beautiful visualizations."""
+def display_cinematic_results(results: dict, scenario: str, location: str):
+    """Display results with cinematic styling."""
     
-    st.markdown("## 📊 Simulation Results")
+    st.markdown('<h2 style="text-align: center; color: #667eea; margin: 2rem 0;">📊 SIMULATION RESULTS</h2>', unsafe_allow_html=True)
     
-    # ROI Highlight with animation
+    # ROI Highlight with explosion effect
     roi_results = results.get('roi_optimization', {})
     total_roi = roi_results.get('total_roi', 0.0)
     
-    st.markdown(f'<div class="roi-highlight">💰 Total ROI: {total_roi:.2f}x Return on Investment</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="success-explosion">💰 TOTAL ROI: {total_roi:.2f}x RETURN ON INVESTMENT</div>', unsafe_allow_html=True)
     
     # Create result tabs
     tab1, tab2, tab3, tab4 = st.tabs(["🎯 Agent Results", "📈 ROI Analysis", "🗺️ Geographic Impact", "🎨 Level-Up Features"])
     
     with tab1:
-        display_dynamic_agent_results(results)
+        display_cinematic_agent_results(results)
     
     with tab2:
-        display_dynamic_roi_analysis(roi_results)
+        display_cinematic_roi_analysis(roi_results)
     
     with tab3:
-        display_dynamic_geographic_impact(results, location)
+        display_cinematic_geographic_impact(results, location)
     
     with tab4:
-        display_dynamic_level_up_features(results)
+        display_cinematic_level_up_features(results)
 
-def display_dynamic_agent_results(results: dict):
-    """Display agent results with enhanced visuals."""
+def display_cinematic_agent_results(results: dict):
+    """Display agent results with cinematic styling."""
     
     agents = ['street_precog', 'housing_oracle', 'budget_prophet', 'crisis_sage']
     
     for agent in agents:
         if agent in results.get('detection', {}):
-            st.markdown(f"### 🤖 {agent.replace('_', ' ').title()}")
+            st.markdown(f'<h3 style="color: #667eea;">🤖 {agent.replace("_", " ").title()}</h3>', unsafe_allow_html=True)
             
             detection = results['detection'].get(agent, {})
             prediction = results['prediction'].get(agent, {})
             prevention = results['prevention'].get(agent, {})
             
-            # Create enhanced agent card
-            st.markdown('<div class="agent-card">', unsafe_allow_html=True)
+            # Create cinematic agent card
+            st.markdown('<div class="agent-card-cinematic">', unsafe_allow_html=True)
             
             # Create columns for each phase
             col1, col2, col3 = st.columns(3)
             
             with col1:
-                st.markdown("**🔍 Detection**")
+                st.markdown("**🔍 DETECTION**")
                 if 'issues_detected' in detection:
                     st.markdown(f"✅ Found {len(detection['issues_detected'])} issues")
                 if 'evictions' in detection:
@@ -453,7 +491,7 @@ def display_dynamic_agent_results(results: dict):
                     st.markdown(f"🚨 Identified {len(detection['crisis_events'])} crisis events")
             
             with col2:
-                st.markdown("**🔮 Prediction**")
+                st.markdown("**🔮 PREDICTION**")
                 if 'predictions' in prediction:
                     st.markdown(f"📊 Generated {len(prediction['predictions'])} predictions")
                 if 'risk_predictions' in prediction:
@@ -464,7 +502,7 @@ def display_dynamic_agent_results(results: dict):
                     st.markdown(f"📈 Predicted {len(prediction['escalation_predictions'])} escalations")
             
             with col3:
-                st.markdown("**🛡️ Prevention**")
+                st.markdown("**🛡️ PREVENTION**")
                 if 'strategies' in prevention:
                     st.markdown(f"🎯 Created {len(prevention['strategies'])} strategies")
                 if 'snap_guidance' in prevention:
@@ -476,17 +514,17 @@ def display_dynamic_agent_results(results: dict):
             
             st.markdown('</div>', unsafe_allow_html=True)
 
-def display_dynamic_roi_analysis(roi_results: dict):
-    """Display ROI analysis with dynamic visualizations."""
+def display_cinematic_roi_analysis(roi_results: dict):
+    """Display ROI analysis with cinematic styling."""
     
-    st.markdown("### 💰 ROI Analysis")
+    st.markdown('<h3 style="color: #667eea;">💰 ROI ANALYSIS</h3>', unsafe_allow_html=True)
     
     # Funding opportunities
     funding_sim = roi_results.get('funding_simulation', {})
     opportunities = funding_sim.get('opportunities', [])
     
     if opportunities:
-        st.markdown("#### 🏛️ Federal Funding Opportunities")
+        st.markdown('<h4 style="color: #667eea;">🏛️ FEDERAL FUNDING OPPORTUNITIES</h4>', unsafe_allow_html=True)
         
         opp_data = []
         for opp in opportunities:
@@ -514,7 +552,7 @@ def display_dynamic_roi_analysis(roi_results: dict):
         # ROI calculations with enhanced visuals
         roi_calcs = roi_results.get('roi_calculations', [])
         if roi_calcs:
-            st.markdown("#### 📊 Strategy ROI Analysis")
+            st.markdown('<h4 style="color: #667eea;">📊 STRATEGY ROI ANALYSIS</h4>', unsafe_allow_html=True)
             
             df_roi = pd.DataFrame(roi_calcs)
             
@@ -530,10 +568,10 @@ def display_dynamic_roi_analysis(roi_results: dict):
             )
             st.plotly_chart(fig, use_container_width=True)
 
-def display_dynamic_geographic_impact(results: dict, location: str):
-    """Display geographic impact with dynamic visualizations."""
+def display_cinematic_geographic_impact(results: dict, location: str):
+    """Display geographic impact with cinematic styling."""
     
-    st.markdown("### 🗺️ Geographic Impact Analysis")
+    st.markdown('<h3 style="color: #667eea;">🗺️ GEOGRAPHIC IMPACT ANALYSIS</h3>', unsafe_allow_html=True)
     
     # Simulate geographic data
     neighborhoods = ['Mission District', 'Tenderloin', 'Downtown', 'Castro District', 'Haight-Ashbury']
@@ -571,12 +609,12 @@ def display_dynamic_geographic_impact(results: dict, location: str):
     )
     st.plotly_chart(fig, use_container_width=True)
 
-def display_dynamic_level_up_features(results: dict):
-    """Display level-up features with dynamic elements."""
+def display_cinematic_level_up_features(results: dict):
+    """Display level-up features with cinematic styling."""
     
-    st.markdown("### 🎯 Level-Up Features & Challenge Alignments")
+    st.markdown('<h3 style="color: #667eea;">🎯 LEVEL-UP FEATURES & CHALLENGE ALIGNMENTS</h3>', unsafe_allow_html=True)
     
-    # Level-up features showcase with enhanced styling
+    # Level-up features showcase with cinematic styling
     level_up_features = {
         "🎥 Live Cam Integration": {
             "description": "Real-time street monitoring with video buffering",
@@ -605,8 +643,9 @@ def display_dynamic_level_up_features(results: dict):
         }
     }
     
-    # Display features with enhanced styling
+    # Display features with cinematic styling
     for feature, details in level_up_features.items():
+        st.markdown('<div class="data-card">', unsafe_allow_html=True)
         col1, col2 = st.columns([3, 1])
         
         with col1:
@@ -615,12 +654,12 @@ def display_dynamic_level_up_features(results: dict):
             st.markdown(f"*Impact: {details['impact']}*")
         
         with col2:
-            st.markdown(f'<div class="challenge-alignment">{details["challenge_alignment"]}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 0.5rem; border-radius: 10px; text-align: center; font-size: 0.8rem;">{details["challenge_alignment"]}</div>', unsafe_allow_html=True)
         
-        st.divider()
+        st.markdown('</div>', unsafe_allow_html=True)
     
     # Challenge alignment summary with enhanced chart
-    st.markdown("### 🏆 Challenge Alignment Summary")
+    st.markdown('<h3 style="color: #667eea;">🏆 CHALLENGE ALIGNMENT SUMMARY</h3>', unsafe_allow_html=True)
     
     challenge_metrics = {
         "Housing & Infrastructure": 0.85,
@@ -645,42 +684,46 @@ def display_dynamic_level_up_features(results: dict):
     )
     st.plotly_chart(fig, use_container_width=True)
 
-def display_citizen_dashboard():
-    """Display citizen dashboard with enhanced interactivity."""
+def display_cinematic_citizen_dashboard():
+    """Display citizen dashboard with cinematic styling."""
     
-    st.markdown("## 👥 Citizen Dashboard")
+    st.markdown('<h2 style="text-align: center; color: #667eea; margin: 2rem 0;">👥 CITIZEN DASHBOARD</h2>', unsafe_allow_html=True)
     
-    # Citizen polls with enhanced styling
-    st.markdown("### 📊 Citizen Polls")
+    # Citizen polls with cinematic styling
+    st.markdown('<h3 style="color: #667eea;">📊 CITIZEN POLLS</h3>', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("#### 🏠 Housing Priorities")
+        st.markdown('<div class="data-card">', unsafe_allow_html=True)
+        st.markdown("#### 🏠 HOUSING PRIORITIES")
         housing_priority = st.selectbox(
             "What housing improvement is most important to you?",
             ["Affordable housing", "Housing quality", "Community safety", "Green spaces"]
         )
         
-        if st.button("🗳️ Vote on Housing", use_container_width=True):
-            st.success("✅ Vote recorded! Thank you for your input.")
+        if st.button("🗳️ VOTE ON HOUSING", use_container_width=True):
+            st.success("✅ VOTE RECORDED! THANK YOU FOR YOUR INPUT.")
             time.sleep(0.5)
             st.balloons()
+        st.markdown('</div>', unsafe_allow_html=True)
     
     with col2:
-        st.markdown("#### 🌳 Street Priorities")
+        st.markdown('<div class="data-card">', unsafe_allow_html=True)
+        st.markdown("#### 🌳 STREET PRIORITIES")
         street_priority = st.selectbox(
             "What street improvement is most important?",
             ["Cleanliness", "Safety", "Accessibility", "Beauty"]
         )
         
-        if st.button("🗳️ Vote on Streets", use_container_width=True):
-            st.success("✅ Vote recorded! Thank you for your input.")
+        if st.button("🗳️ VOTE ON STREETS", use_container_width=True):
+            st.success("✅ VOTE RECORDED! THANK YOU FOR YOUR INPUT.")
             time.sleep(0.5)
             st.balloons()
+        st.markdown('</div>', unsafe_allow_html=True)
     
-    # Community stories with enhanced styling
-    st.markdown("### 📖 Community Stories")
+    # Community stories with cinematic styling
+    st.markdown('<h3 style="color: #667eea;">📖 COMMUNITY STORIES</h3>', unsafe_allow_html=True)
     
     stories = [
         {
@@ -707,14 +750,16 @@ def display_citizen_dashboard():
     ]
     
     for story in stories:
-        with st.expander(f"💬 {story['author']} from {story['location']}"):
-            st.markdown(f'<div class="citizen-story">{story["story"]}</div>', unsafe_allow_html=True)
-            st.markdown(f"**Category**: {story['category'].title()} | **Impact**: {story['impact'].title()}")
+        st.markdown('<div class="agent-card-cinematic">', unsafe_allow_html=True)
+        st.markdown(f"**💬 {story['author']} from {story['location']}**")
+        st.write(story['story'])
+        st.markdown(f"**Category**: {story['category'].title()} | **Impact**: {story['impact'].title()}")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-def display_future_visualizations():
-    """Display MidJourney future visualizations with enhanced styling."""
+def display_cinematic_future_visualizations():
+    """Display MidJourney future visualizations with cinematic styling."""
     
-    st.markdown("## 🎨 Future SF Visualizations")
+    st.markdown('<h2 style="text-align: center; color: #667eea; margin: 2rem 0;">🎨 FUTURE SF VISUALIZATIONS</h2>', unsafe_allow_html=True)
     
     # Scenario selection for visualizations
     viz_scenario = st.selectbox(
@@ -722,47 +767,56 @@ def display_future_visualizations():
         ["Housing Crisis Resolved", "Beautiful Streets", "Community Resilience", "General Improvement"]
     )
     
-    if st.button("🎨 Generate Future Visualizations", use_container_width=True):
-        with st.spinner("🎨 Generating MidJourney visualizations..."):
+    if st.button("🎨 GENERATE FUTURE VISUALIZATIONS", use_container_width=True):
+        with st.spinner("🎨 GENERATING MIDJOURNEY VISUALIZATIONS..."):
             time.sleep(2)  # Simulate generation time
             
             # Simulate MidJourney images
             images = generate_mock_midjourney_images(viz_scenario)
             
-            st.markdown("### 🖼️ Generated Visualizations")
+            st.markdown('<h3 style="color: #667eea;">🖼️ GENERATED VISUALIZATIONS</h3>', unsafe_allow_html=True)
             
             for i, image in enumerate(images):
+                st.markdown('<div class="agent-card-cinematic">', unsafe_allow_html=True)
                 col1, col2 = st.columns([1, 2])
                 
                 with col1:
-                    st.markdown(f'<div class="midjourney-viz">🖼️ Future SF Visualization {i+1}</div>', unsafe_allow_html=True)
+                    st.markdown(f"🖼️ **Future SF Visualization {i+1}**")
                 
                 with col2:
                     st.markdown(f"**Prompt**: {image['prompt']}")
                     st.markdown(f"**Description**: {image['description']}")
                     st.markdown(f"**Generated**: {image['generated_at']}")
+                
+                st.markdown('</div>', unsafe_allow_html=True)
 
-def display_transparency():
-    """Display transparency and ethics information with enhanced styling."""
+def display_cinematic_transparency():
+    """Display transparency and ethics information with cinematic styling."""
     
-    st.markdown("## 📊 Transparency & Ethics")
+    st.markdown('<h2 style="text-align: center; color: #667eea; margin: 2rem 0;">📊 TRANSPARENCY & ETHICS</h2>', unsafe_allow_html=True)
     
-    # Ethics metrics with enhanced styling
-    st.markdown("### 🛡️ Ethics & Bias Monitoring")
+    # Ethics metrics with cinematic styling
+    st.markdown('<h3 style="color: #667eea;">🛡️ ETHICS & BIAS MONITORING</h3>', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
+        st.markdown('<div class="data-card">', unsafe_allow_html=True)
         st.metric("Data Privacy", "✅ Protected", "Anonymized citizen data")
+        st.markdown('</div>', unsafe_allow_html=True)
     
     with col2:
+        st.markdown('<div class="data-card">', unsafe_allow_html=True)
         st.metric("Bias Detection", "✅ Monitored", "Regular fairness audits")
+        st.markdown('</div>', unsafe_allow_html=True)
     
     with col3:
+        st.markdown('<div class="data-card">', unsafe_allow_html=True)
         st.metric("Transparency", "✅ Open", "Public algorithm logs")
+        st.markdown('</div>', unsafe_allow_html=True)
     
-    # Algorithm logs with enhanced styling
-    st.markdown("### 📋 Algorithm Decision Logs")
+    # Algorithm logs with cinematic styling
+    st.markdown('<h3 style="color: #667eea;">📋 ALGORITHM DECISION LOGS</h3>', unsafe_allow_html=True)
     
     logs = [
         {
@@ -792,7 +846,7 @@ def display_transparency():
     st.dataframe(df_logs, use_container_width=True)
     
     # ROI transparency with enhanced chart
-    st.markdown("### 💰 ROI Transparency")
+    st.markdown('<h3 style="color: #667eea;">💰 ROI TRANSPARENCY</h3>', unsafe_allow_html=True)
     
     roi_data = {
         'Category': ['Housing', 'Infrastructure', 'Social Services', 'Emergency Response'],
@@ -854,8 +908,8 @@ def generate_mock_midjourney_images(scenario: str) -> List[Dict[str, Any]]:
     
     return images
 
-def display_enhanced_agent_status():
-    """Display current agent status with enhanced visuals."""
+def display_cinematic_agent_status():
+    """Display current agent status with cinematic styling."""
     
     # Simulate agent status
     agent_status = {
@@ -870,7 +924,7 @@ def display_enhanced_agent_status():
         color = "🟢" if confidence > 0.8 else "🟡" if confidence > 0.6 else "🔴"
         
         st.sidebar.markdown(f"{color} **{agent}**")
-        st.sidebar.progress(confidence)
+        st.sidebar.markdown(f'<div class="progress-cinematic" style="width: {confidence*100}%;"></div>', unsafe_allow_html=True)
         st.sidebar.markdown(f"Confidence: {confidence:.1%}")
 
 if __name__ == "__main__":
