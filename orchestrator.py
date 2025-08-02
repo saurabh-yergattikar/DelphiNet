@@ -50,8 +50,18 @@ class Orchestrator:
         roi_results = self._optimize_roi_with_funding(prevention_results)
         coordination_results['roi_optimization'] = roi_results
         
-        # Step 5: Broadcast results
-        st.write("📡 **Phase 5: Broadcasting**")
+        # Step 5: Generate visualizations
+        st.write("🎨 **Phase 5: Future Visualizations**")
+        viz_results = self._run_visualization_phase(coordination_results)
+        coordination_results['visualization'] = viz_results
+        
+        # Step 6: Citizen engagement
+        st.write("👥 **Phase 6: Citizen Engagement**")
+        citizen_results = self._run_citizen_engagement_phase(coordination_results)
+        coordination_results['citizen_engagement'] = citizen_results
+        
+        # Step 7: Broadcast results
+        st.write("📡 **Phase 7: Broadcasting**")
         broadcast_results = self._run_broadcast_phase(coordination_results)
         coordination_results['broadcast'] = broadcast_results
         
@@ -161,6 +171,48 @@ class Orchestrator:
             st.success(f"📡 {agent_name}: Broadcasting completed")
         
         return broadcast_results
+    
+    def _run_visualization_phase(self, coordination_results: Dict[str, Any]) -> Dict[str, Any]:
+        """Run visualization phase with MidJourney integration."""
+        viz_results = {}
+        
+        # Combine all results for visualization
+        combined_data = self._combine_all_results(coordination_results)
+        
+        for agent_name, agent in self.agents.items():
+            agent.set_mode(agent.mode.__class__.VIZ_GENERATE)
+            result = agent.execute(combined_data)
+            viz_results[agent_name] = result
+            
+            # Level-up: Show visualization status
+            level_up_status = result.get('level_up_status', {})
+            st.success(f"🎨 {agent_name}: {result.get('level_up_message', 'Visualization completed')}")
+            
+            if level_up_status.get('midjourney_prompts'):
+                st.info(f"🎯 Level-up: Generated {len(level_up_status['midjourney_prompts'])} MidJourney prompts")
+        
+        return viz_results
+    
+    def _run_citizen_engagement_phase(self, coordination_results: Dict[str, Any]) -> Dict[str, Any]:
+        """Run citizen engagement phase with polls and community stories."""
+        citizen_results = {}
+        
+        # Combine all results for citizen engagement
+        combined_data = self._combine_all_results(coordination_results)
+        
+        for agent_name, agent in self.agents.items():
+            agent.set_mode(agent.mode.__class__.POLL_OUTPUT)
+            result = agent.execute(combined_data)
+            citizen_results[agent_name] = result
+            
+            # Level-up: Show citizen engagement status
+            level_up_status = result.get('level_up_status', {})
+            st.success(f"👥 {agent_name}: {result.get('level_up_message', 'Citizen engagement completed')}")
+            
+            if level_up_status.get('citizen_votes'):
+                st.info(f"🎯 Level-up: Collected {len(level_up_status['citizen_votes'])} citizen votes")
+        
+        return citizen_results
     
     def _combine_detection_data(self, detection_results: Dict[str, Any]) -> Dict[str, Any]:
         """Combine detection data from all agents."""

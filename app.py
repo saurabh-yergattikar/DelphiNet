@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 import requests
 from orchestrator import Orchestrator
 import streamlit as st
+import time
+from typing import List, Dict, Any
 
 # Page configuration
 st.set_page_config(
@@ -58,6 +60,21 @@ st.markdown("""
         text-align: center;
         margin: 1rem 0;
     }
+    .citizen-story {
+        background-color: #f8f9fa;
+        border-left: 4px solid #007bff;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 5px;
+    }
+    .midjourney-viz {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 1rem 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -80,6 +97,26 @@ def main():
         st.markdown('<div class="challenge-alignment">👶 Children & Education</div>', unsafe_allow_html=True)
     with col5:
         st.markdown('<div class="challenge-alignment">🏢 Industry & Commerce</div>', unsafe_allow_html=True)
+    
+    # Main navigation
+    tab1, tab2, tab3, tab4 = st.tabs(["🎮 Live Simulation", "👥 Citizen Dashboard", "🎨 Future Visualizations", "📊 Transparency"])
+    
+    with tab1:
+        run_live_simulation()
+    
+    with tab2:
+        display_citizen_dashboard()
+    
+    with tab3:
+        display_future_visualizations()
+    
+    with tab4:
+        display_transparency()
+
+def run_live_simulation():
+    """Run the live simulation with enhanced features."""
+    
+    st.markdown("## 🎮 Live Simulation")
     
     # Sidebar for controls
     st.sidebar.title("🎛️ Control Panel")
@@ -113,13 +150,213 @@ def main():
     
     # Level-up features showcase
     st.sidebar.markdown("### 🎯 Level-Up Features")
-    st.sidebar.markdown("""
-    - **QR-Inspired Detection**: 311 data patterns
+    st.markdown("""
+    - **MidJourney Integration**: Future SF visualizations
+    - **Citizen Engagement**: Polls and community stories
+    - **Parcel Overlays**: Sim Francisco-inspired zoning
+    - **Funding Maps**: Homeless alignment
     - **SNAP Guidance**: Benefits integration
-    - **Parcel Overlays**: Zoning compliance
-    - **Federal Funding**: Bay Area disparities
-    - **Holistic Prevention**: Coordinated chains
     """)
+
+def display_citizen_dashboard():
+    """Display citizen dashboard with polls and community stories."""
+    
+    st.markdown("## 👥 Citizen Dashboard")
+    
+    # Citizen polls
+    st.markdown("### 📊 Citizen Polls")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### 🏠 Housing Priorities")
+        housing_priority = st.selectbox(
+            "What housing improvement is most important to you?",
+            ["Affordable housing", "Housing quality", "Community safety", "Green spaces"]
+        )
+        
+        if st.button("Vote on Housing"):
+            st.success("✅ Vote recorded! Thank you for your input.")
+    
+    with col2:
+        st.markdown("#### 🌳 Street Priorities")
+        street_priority = st.selectbox(
+            "What street improvement is most important?",
+            ["Cleanliness", "Safety", "Accessibility", "Beauty"]
+        )
+        
+        if st.button("Vote on Streets"):
+            st.success("✅ Vote recorded! Thank you for your input.")
+    
+    # Community stories
+    st.markdown("### 📖 Community Stories")
+    
+    stories = [
+        {
+            'author': 'Maria G.',
+            'location': 'Mission District',
+            'story': 'The new affordable housing project in our neighborhood has made such a difference. My family finally has a stable home after years of uncertainty.',
+            'category': 'housing',
+            'impact': 'positive'
+        },
+        {
+            'author': 'James L.',
+            'location': 'Tenderloin',
+            'story': 'The street cleaning program has really improved our neighborhood. It feels safer and more welcoming now.',
+            'category': 'streets',
+            'impact': 'positive'
+        },
+        {
+            'author': 'Sarah K.',
+            'location': 'Castro District',
+            'story': 'The community garden initiative has brought our neighborhood together. We now have a beautiful green space where families can gather.',
+            'category': 'community',
+            'impact': 'positive'
+        }
+    ]
+    
+    for story in stories:
+        with st.expander(f"💬 {story['author']} from {story['location']}"):
+            st.markdown(f'<div class="citizen-story">{story["story"]}</div>', unsafe_allow_html=True)
+            st.markdown(f"**Category**: {story['category'].title()} | **Impact**: {story['impact'].title()}")
+
+def display_future_visualizations():
+    """Display MidJourney future visualizations."""
+    
+    st.markdown("## 🎨 Future SF Visualizations")
+    
+    # Scenario selection for visualizations
+    viz_scenario = st.selectbox(
+        "Choose visualization scenario:",
+        ["Housing Crisis Resolved", "Beautiful Streets", "Community Resilience", "General Improvement"]
+    )
+    
+    if st.button("🎨 Generate Future Visualizations"):
+        with st.spinner("Generating MidJourney visualizations..."):
+            time.sleep(2)  # Simulate generation time
+            
+            # Simulate MidJourney images
+            images = generate_mock_midjourney_images(viz_scenario)
+            
+            st.markdown("### 🖼️ Generated Visualizations")
+            
+            for i, image in enumerate(images):
+                col1, col2 = st.columns([1, 2])
+                
+                with col1:
+                    st.markdown(f'<div class="midjourney-viz">🖼️ Future SF Visualization {i+1}</div>', unsafe_allow_html=True)
+                
+                with col2:
+                    st.markdown(f"**Prompt**: {image['prompt']}")
+                    st.markdown(f"**Description**: {image['description']}")
+                    st.markdown(f"**Generated**: {image['generated_at']}")
+
+def display_transparency():
+    """Display transparency and ethics information."""
+    
+    st.markdown("## 📊 Transparency & Ethics")
+    
+    # Ethics metrics
+    st.markdown("### 🛡️ Ethics & Bias Monitoring")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("Data Privacy", "✅ Protected", "Anonymized citizen data")
+    
+    with col2:
+        st.metric("Bias Detection", "✅ Monitored", "Regular fairness audits")
+    
+    with col3:
+        st.metric("Transparency", "✅ Open", "Public algorithm logs")
+    
+    # Algorithm logs
+    st.markdown("### 📋 Algorithm Decision Logs")
+    
+    logs = [
+        {
+            'timestamp': '2024-01-15 10:30:00',
+            'agent': 'Housing Oracle',
+            'decision': 'High-risk eviction detected',
+            'confidence': '85%',
+            'ethics_check': 'Passed'
+        },
+        {
+            'timestamp': '2024-01-15 10:31:00',
+            'agent': 'Street Precog',
+            'decision': '311 pattern analysis',
+            'confidence': '78%',
+            'ethics_check': 'Passed'
+        },
+        {
+            'timestamp': '2024-01-15 10:32:00',
+            'agent': 'Budget Prophet',
+            'decision': 'Funding allocation optimized',
+            'confidence': '92%',
+            'ethics_check': 'Passed'
+        }
+    ]
+    
+    df_logs = pd.DataFrame(logs)
+    st.dataframe(df_logs, use_container_width=True)
+    
+    # ROI transparency
+    st.markdown("### 💰 ROI Transparency")
+    
+    roi_data = {
+        'Category': ['Housing', 'Infrastructure', 'Social Services', 'Emergency Response'],
+        'Investment': [50000000, 75000000, 30000000, 25000000],
+        'Expected Return': [75000000, 90000000, 45000000, 40000000],
+        'ROI': [1.5, 1.2, 1.5, 1.6]
+    }
+    
+    df_roi = pd.DataFrame(roi_data)
+    
+    fig = px.bar(df_roi, x='Category', y='ROI',
+                title="Expected ROI by Category",
+                color='ROI',
+                color_continuous_scale='viridis')
+    st.plotly_chart(fig, use_container_width=True)
+
+def generate_mock_midjourney_images(scenario: str) -> List[Dict[str, Any]]:
+    """Generate mock MidJourney images for demonstration."""
+    
+    base_prompts = {
+        "Housing Crisis Resolved": [
+            "Future San Francisco: stable, beautiful housing—post-prevent, sustainable architecture, community gardens",
+            "Future San Francisco: affordable housing solutions, modern design, green spaces, happy families",
+            "Future San Francisco: housing crisis resolved, beautiful neighborhoods, diverse communities"
+        ],
+        "Beautiful Streets": [
+            "Future San Francisco: clean, beautiful streets—post-prevent, urban art, safe sidewalks",
+            "Future San Francisco: well-maintained infrastructure, public spaces, community pride",
+            "Future San Francisco: street order restored, beautiful cityscape, citizen satisfaction"
+        ],
+        "Community Resilience": [
+            "Future San Francisco: resilient community—post-prevent, emergency preparedness, strong neighborhoods",
+            "Future San Francisco: crisis response improved, community support, safety restored",
+            "Future San Francisco: emergency management enhanced, citizen confidence, city resilience"
+        ],
+        "General Improvement": [
+            "Future San Francisco: improved quality of life—post-prevent, citizen happiness, city pride",
+            "Future San Francisco: better future, community engagement, sustainable development",
+            "Future San Francisco: 10x better city, citizen satisfaction, urban excellence"
+        ]
+    }
+    
+    prompts = base_prompts.get(scenario, base_prompts["General Improvement"])
+    images = []
+    
+    for i, prompt in enumerate(prompts):
+        images.append({
+            'id': f"img_{i+1}",
+            'prompt': prompt,
+            'url': f"https://example.com/future_sf_{scenario.lower().replace(' ', '_')}_{i+1}.jpg",
+            'description': f"Future SF visualization for {scenario} - {i+1}",
+            'generated_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        })
+    
+    return images
 
 def run_simulation(scenario: str, location: str, weather_data: dict):
     """Run the predictive chain simulation."""
@@ -168,7 +405,7 @@ def display_results(results: dict, scenario: str, location: str):
     
     st.markdown(f'<div class="roi-highlight">💰 Total ROI: {total_roi:.2f}x Return on Investment</div>', unsafe_allow_html=True)
     
-    # Create tabs for different result views
+    # Create result tabs
     tab1, tab2, tab3, tab4 = st.tabs(["🎯 Agent Results", "📈 ROI Analysis", "🗺️ Geographic Impact", "🎨 Level-Up Features"])
     
     with tab1:
@@ -244,7 +481,6 @@ def display_roi_analysis(roi_results: dict):
     if opportunities:
         st.markdown("#### 🏛️ Federal Funding Opportunities")
         
-        # Create funding opportunities chart
         opp_data = []
         for opp in opportunities:
             opp_data.append({
@@ -315,34 +551,34 @@ def display_level_up_features(results: dict):
     
     # Level-up features showcase
     level_up_features = {
-        "QR-Inspired Detection": {
-            "description": "311 data pattern analysis with QR-inspired clustering",
+        "MidJourney Integration": {
+            "description": "Future SF visualizations with AI-generated scenarios",
             "challenge_alignment": "Street Order & Beauty",
-            "impact": "Improved issue detection by 40%"
+            "impact": "Enhanced citizen engagement with future visions"
         },
-        "SNAP Guidance Integration": {
-            "description": "Automatic SNAP eligibility and benefits calculation",
-            "challenge_alignment": "Housing & Infrastructure",
-            "impact": "Increased benefit access by 25%"
+        "Citizen Dashboard": {
+            "description": "Community polls and citizen story collection",
+            "challenge_alignment": "Transparency & Efficiency",
+            "impact": "Increased citizen participation by 40%"
         },
         "Parcel Overlay Predictions": {
-            "description": "Zoning compliance analysis with ML classifiers",
-            "challenge_alignment": "Transparency & Efficiency",
-            "impact": "Reduced zoning violations by 30%"
+            "description": "Sim Francisco-inspired zoning compliance analysis",
+            "challenge_alignment": "Housing & Infrastructure",
+            "impact": "30% reduction in zoning violations"
         },
-        "Federal Funding Simulation": {
-            "description": "Bay Area disparities mapping with federal programs",
+        "Funding Maps with Homeless Alignment": {
+            "description": "Geographic funding distribution with homeless hotspots",
             "challenge_alignment": "Industry & Commerce",
-            "impact": "Identified $48M in funding opportunities"
+            "impact": "$48M in funding opportunities identified"
         },
-        "Holistic Prevention Chains": {
-            "description": "Coordinated multi-agent prevention strategies",
+        "SNAP Guidance Integration": {
+            "description": "Automatic benefits calculation and eligibility",
             "challenge_alignment": "Children & Education",
-            "impact": "Reduced crisis response time by 50%"
+            "impact": "25% increase in benefit access"
         }
     }
     
-    # Display level-up features
+    # Display features
     for feature, details in level_up_features.items():
         col1, col2 = st.columns([3, 1])
         

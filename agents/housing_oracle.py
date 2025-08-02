@@ -18,6 +18,12 @@ class HousingOracle(BaseAgent):
             'benefits_calculation': self._calculate_snap_benefits,
             'application_guide': self._generate_application_guide
         }
+        # Level-up: Sim Francisco-inspired parcel overlays
+        self.parcel_overlays = {
+            'zoning_districts': ['RH-1', 'RH-2', 'RH-3', 'RM-1', 'RM-2', 'RM-3', 'RTO', 'C-1', 'C-2', 'C-3'],
+            'development_potential': ['low', 'medium', 'high'],
+            'affordability_impact': ['positive', 'neutral', 'negative']
+        }
         
     def detect(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Detect housing issues using eviction and permit data."""
@@ -145,22 +151,72 @@ class HousingOracle(BaseAgent):
         return mock_permits
     
     def _detect_parcel_issues(self, evictions: List[Dict[str, Any]], permits: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Detect parcel and zoning compliance issues."""
+        """Detect parcel and zoning compliance issues with Sim Francisco-inspired overlays."""
         parcel_issues = []
         
-        # Simulate parcel analysis
+        # Level-up: Enhanced parcel analysis with zoning overlays
         for eviction in evictions:
             address = eviction['address']
-            # Check if address has zoning compliance issues
-            if 'Market St' in address:
+            
+            # Sim Francisco-inspired parcel overlay analysis
+            parcel_analysis = self._analyze_parcel_overlay(address)
+            
+            if parcel_analysis['zoning_compliance'] == 'violation':
                 parcel_issues.append({
                     'address': address,
                     'issue_type': 'zoning_violation',
-                    'severity': 0.7,
-                    'description': 'Residential use in commercial zone'
+                    'severity': parcel_analysis['severity'],
+                    'description': parcel_analysis['description'],
+                    'zoning_district': parcel_analysis['zoning_district'],
+                    'development_potential': parcel_analysis['development_potential'],
+                    'affordability_impact': parcel_analysis['affordability_impact']
+                })
+            elif parcel_analysis['development_potential'] == 'high':
+                parcel_issues.append({
+                    'address': address,
+                    'issue_type': 'development_opportunity',
+                    'severity': parcel_analysis['severity'],
+                    'description': f"High development potential in {parcel_analysis['zoning_district']} zone",
+                    'zoning_district': parcel_analysis['zoning_district'],
+                    'development_potential': parcel_analysis['development_potential'],
+                    'affordability_impact': parcel_analysis['affordability_impact']
                 })
         
         return parcel_issues
+    
+    def _analyze_parcel_overlay(self, address: str) -> Dict[str, Any]:
+        """Analyze parcel with Sim Francisco-inspired overlays."""
+        # Simulate parcel overlay analysis
+        import random
+        
+        # Simulate zoning district assignment
+        zoning_district = random.choice(self.parcel_overlays['zoning_districts'])
+        development_potential = random.choice(self.parcel_overlays['development_potential'])
+        affordability_impact = random.choice(self.parcel_overlays['affordability_impact'])
+        
+        # Determine compliance and severity
+        if 'Market St' in address or 'Mission St' in address:
+            zoning_compliance = 'violation'
+            severity = 0.8
+            description = f"Residential use in {zoning_district} commercial zone"
+        elif 'Castro St' in address:
+            zoning_compliance = 'compliant'
+            severity = 0.3
+            description = f"Properly zoned for {zoning_district} residential use"
+        else:
+            zoning_compliance = 'compliant'
+            severity = 0.5
+            description = f"Standard {zoning_district} zoning compliance"
+        
+        return {
+            'address': address,
+            'zoning_district': zoning_district,
+            'zoning_compliance': zoning_compliance,
+            'development_potential': development_potential,
+            'affordability_impact': affordability_impact,
+            'severity': severity,
+            'description': description
+        }
     
     def _predict_zoning_risks(self, evictions: List[Dict[str, Any]], permits: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Predict zoning compliance risks using ML classifier."""

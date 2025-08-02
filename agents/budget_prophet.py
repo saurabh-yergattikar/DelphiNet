@@ -20,6 +20,12 @@ class BudgetProphet(BaseAgent):
             'dot': 'Department of Transportation',
             'hhs': 'Health and Human Services'
         }
+        # Level-up: Funding maps with homeless alignment
+        self.funding_maps = {
+            'homeless_hotspots': ['Tenderloin', 'Mission District', 'South of Market', 'Civic Center'],
+            'funding_priorities': ['emergency_shelter', 'permanent_housing', 'support_services', 'prevention'],
+            'geographic_impact': ['high', 'medium', 'low']
+        }
         
     def detect(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Detect current funding allocations and gaps."""
@@ -234,28 +240,49 @@ class BudgetProphet(BaseAgent):
         return predictions
     
     def _simulate_bay_area_disparities(self, federal_opportunities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Simulate Bay Area funding disparities."""
+        """Simulate Bay Area funding disparities with homeless alignment."""
         disparities = []
         
-        # Level-up: Bay Area disparities mapping
+        # Level-up: Bay Area disparities mapping with homeless hotspots
         bay_area_regions = [
-            {'region': 'San Francisco', 'poverty_rate': 0.12, 'funding_per_capita': 2500},
-            {'region': 'Oakland', 'poverty_rate': 0.18, 'funding_per_capita': 1800},
-            {'region': 'San Jose', 'poverty_rate': 0.08, 'funding_per_capita': 2200},
-            {'region': 'Richmond', 'poverty_rate': 0.22, 'funding_per_capita': 1500}
+            {'region': 'San Francisco', 'poverty_rate': 0.12, 'funding_per_capita': 2500, 'homeless_population': 8000},
+            {'region': 'Oakland', 'poverty_rate': 0.18, 'funding_per_capita': 1800, 'homeless_population': 4000},
+            {'region': 'San Jose', 'poverty_rate': 0.08, 'funding_per_capita': 2200, 'homeless_population': 6000},
+            {'region': 'Richmond', 'poverty_rate': 0.22, 'funding_per_capita': 1500, 'homeless_population': 2000}
         ]
         
         for region in bay_area_regions:
-            if region['poverty_rate'] > 0.15 and region['funding_per_capita'] < 2000:
+            # Enhanced disparity calculation with homeless alignment
+            homeless_factor = region['homeless_population'] / 10000  # Normalize to 0-1 scale
+            poverty_factor = region['poverty_rate']
+            
+            # Calculate composite need score
+            need_score = (homeless_factor * 0.6) + (poverty_factor * 0.4)
+            
+            if need_score > 0.15 and region['funding_per_capita'] < 2000:
                 disparities.append({
                     'region': region['region'],
                     'poverty_rate': region['poverty_rate'],
+                    'homeless_population': region['homeless_population'],
+                    'need_score': need_score,
                     'funding_gap': 2000 - region['funding_per_capita'],
-                    'priority': 'high',
-                    'recommended_funding': region['funding_per_capita'] * 1.5
+                    'priority': 'high' if need_score > 0.2 else 'medium',
+                    'recommended_funding': region['funding_per_capita'] * (1 + need_score),
+                    'funding_priorities': self._get_funding_priorities(region['region'])
                 })
         
         return disparities
+    
+    def _get_funding_priorities(self, region: str) -> List[str]:
+        """Get funding priorities based on region characteristics."""
+        if region == 'San Francisco':
+            return ['permanent_housing', 'support_services', 'emergency_shelter']
+        elif region == 'Oakland':
+            return ['emergency_shelter', 'permanent_housing', 'prevention']
+        elif region == 'San Jose':
+            return ['support_services', 'permanent_housing', 'prevention']
+        else:
+            return ['emergency_shelter', 'support_services', 'prevention']
     
     def _generate_federal_strategies(self, opportunities: List[Dict[str, Any]], disparities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Generate federal funding strategies."""
