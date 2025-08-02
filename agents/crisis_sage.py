@@ -6,117 +6,118 @@ import requests
 from .base_agent import BaseAgent, AgentMode
 
 class CrisisSage(BaseAgent):
-    """Crisis Sage Agent: Coordinates emergency response with holistic prevention chains."""
+    """Crisis Sage Agent: Coordinates emergency response and holistic prevention chains."""
     
     def __init__(self):
         super().__init__("Crisis Sage", threshold=0.85)
         self.crisis_types = {
-            'natural_disaster': ['earthquake', 'fire', 'flood'],
-            'public_health': ['outbreak', 'contamination'],
-            'infrastructure': ['power_outage', 'water_main_break'],
-            'social': ['protest', 'civil_unrest']
+            'medical': ['overdose', 'mental_health', 'medical_emergency'],
+            'safety': ['fire', 'accident', 'violence'],
+            'infrastructure': ['power_outage', 'water_main', 'building_collapse'],
+            'environmental': ['flood', 'earthquake', 'air_quality']
         }
         self.response_coordination = {
-            'first_responders': ['police', 'fire', 'ems'],
-            'support_services': ['shelter', 'food', 'medical'],
-            'communication': ['alerts', 'updates', 'coordination']
+            'emergency_services': ['police', 'fire', 'ambulance'],
+            'support_services': ['mental_health', 'social_services', 'housing'],
+            'infrastructure': ['utilities', 'transportation', 'communications']
         }
         
     def detect(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Detect crisis situations and coordinate initial response."""
-        # Simulate crisis detection
-        crisis_events = self._detect_crisis_events(data.get('location', 'San Francisco'))
-        coordination_needs = self._assess_coordination_needs(crisis_events)
+        """Detect crisis events and coordinate response."""
+        # Simulate crisis event data
+        crisis_events = self._fetch_crisis_data(data.get('location', 'San Francisco'))
         
-        # Level-up: Holistic prevention chain detection
-        prevention_chains = self._detect_prevention_chains(crisis_events)
+        # Detect escalation patterns
+        escalation_patterns = self._detect_escalation_patterns(crisis_events)
         
-        confidence = min(0.95, len(crisis_events) * 0.1 + len(coordination_needs) * 0.15 + len(prevention_chains) * 0.2)
+        # Coordinate response teams
+        response_coordination = self._coordinate_response_teams(crisis_events)
+        
+        # Calculate confidence
+        confidence = min(0.9, len(crisis_events) * 0.1 + len(escalation_patterns) * 0.2)
         self.update_confidence(confidence)
-        
-        self.add_level_up_feature('prevention_chains', prevention_chains)
         
         return {
             'crisis_events': crisis_events,
-            'coordination_needs': coordination_needs,
-            'prevention_chains': prevention_chains,
+            'escalation_patterns': escalation_patterns,
+            'response_coordination': response_coordination,
             'confidence': confidence,
             'mode': 'detect',
-            'level_up_message': f"Holistic prevention chains detected: {len(prevention_chains)} coordinated responses"
+            'level_up_message': f"Holistic prevention chains detected: {len(response_coordination)} coordinated responses"
         }
     
     def predict(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Predict crisis escalation and resource needs."""
         crisis_events = data.get('crisis_events', [])
-        prevention_chains = data.get('prevention_chains', [])
+        escalation_patterns = data.get('escalation_patterns', [])
         
         # Predict crisis escalation
         escalation_predictions = self._predict_crisis_escalation(crisis_events)
         
-        # Level-up: Resource prediction with prevention integration
-        resource_predictions = self._predict_resource_needs(crisis_events, prevention_chains)
+        # Predict resource needs
+        resource_predictions = self._predict_resource_needs(crisis_events)
         
-        confidence = min(0.9, len(escalation_predictions) * 0.1 + len(resource_predictions) * 0.15)
+        # Predict response effectiveness
+        response_predictions = self._predict_response_effectiveness(crisis_events)
+        
+        # Combine all predictions
+        all_predictions = escalation_predictions + resource_predictions + response_predictions
+        
+        confidence = min(0.85, len(all_predictions) * 0.15)
         self.update_confidence(confidence)
         
-        self.add_level_up_feature('resource_predictions', resource_predictions)
-        
         return {
-            'escalation_predictions': escalation_predictions,
-            'resource_predictions': resource_predictions,
+            'escalation_predictions': all_predictions,
+            'crisis_escalation': escalation_predictions,
+            'resource_needs': resource_predictions,
+            'response_effectiveness': response_predictions,
             'confidence': confidence,
             'mode': 'predict',
-            'level_up_message': f"Resource prediction with prevention integration - {len(resource_predictions)} needs identified"
+            'level_up_message': f"Predicted {len(escalation_predictions)} crisis escalations"
         }
     
     def prevent(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate prevention strategies with holistic coordination."""
+        """Generate holistic prevention strategies."""
         crisis_events = data.get('crisis_events', [])
-        prevention_chains = data.get('prevention_chains', [])
-        resource_predictions = data.get('resource_predictions', [])
+        escalation_predictions = data.get('escalation_predictions', [])
         
-        prevention_strategies = []
+        # Generate crisis prevention strategies
+        crisis_strategies = self._generate_crisis_strategies(crisis_events)
         
-        # Generate coordinated prevention strategies
-        for chain in prevention_chains:
-            strategy = {
-                'type': 'coordinated_prevention',
-                'crisis_type': chain.get('crisis_type'),
-                'coordination_plan': chain.get('coordination_plan'),
-                'resources_needed': chain.get('resources'),
-                'priority': 'high'
-            }
-            prevention_strategies.append(strategy)
+        # Generate holistic coordination strategies
+        holistic_strategies = self._generate_holistic_strategies(crisis_events, escalation_predictions)
         
-        # Level-up: Holistic prevention integration
-        holistic_strategies = self._generate_holistic_strategies(crisis_events, prevention_chains)
+        # Generate resource allocation strategies
+        resource_strategies = self._generate_resource_strategies(crisis_events)
         
-        confidence = min(0.85, len(prevention_strategies) * 0.15 + len(holistic_strategies) * 0.1)
+        # Combine all strategies
+        all_strategies = crisis_strategies + holistic_strategies + resource_strategies
+        
+        confidence = min(0.8, len(all_strategies) * 0.15)
         self.update_confidence(confidence)
         
-        self.add_level_up_feature('holistic_strategies', holistic_strategies)
-        
         return {
-            'strategies': prevention_strategies,
+            'strategies': all_strategies,
+            'crisis_strategies': crisis_strategies,
             'holistic_strategies': holistic_strategies,
+            'resource_strategies': resource_strategies,
             'confidence': confidence,
             'mode': 'prevent',
-            'level_up_message': f"Holistic prevention integration - {len(holistic_strategies)} coordinated strategies"
+            'level_up_message': f"Coordinated {len(holistic_strategies)} holistic strategies"
         }
     
     def broadcast(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Broadcast crisis coordination data to other agents."""
+        """Broadcast crisis coordination findings to other agents."""
         crisis_events = data.get('crisis_events', [])
-        prevention_chains = data.get('prevention_chains', [])
+        escalation_predictions = data.get('escalation_predictions', [])
         strategies = data.get('strategies', [])
-        holistic_strategies = data.get('holistic_strategies', [])
         
         broadcast_data = {
             'crisis_events': crisis_events,
-            'prevention_chains': prevention_chains,
+            'escalation_predictions': escalation_predictions,
             'prevention_strategies': strategies,
-            'holistic_strategies': holistic_strategies,
-            'resource_predictions': data.get('resource_predictions', [])
+            'response_coordination': data.get('response_coordination', []),
+            'escalation_patterns': data.get('escalation_patterns', [])
         }
         
         confidence = min(0.9, len(broadcast_data) * 0.1)
@@ -126,134 +127,219 @@ class CrisisSage(BaseAgent):
             'broadcast_data': broadcast_data,
             'confidence': confidence,
             'mode': 'broadcast',
-            'level_up_message': f"Broadcasting crisis coordination with holistic prevention chains"
+            'level_up_message': f"Broadcasting {len(crisis_events)} crisis events with coordination"
         }
     
-    def _detect_crisis_events(self, location: str) -> List[Dict[str, Any]]:
-        """Detect crisis events in the area."""
-        # Simulate crisis event detection
-        mock_crises = [
-            {
-                'id': 1,
-                'type': 'natural_disaster',
-                'subtype': 'fire',
-                'location': 'Mission District',
-                'severity': 0.8,
-                'status': 'active',
-                'resources_needed': ['fire_trucks', 'evacuation_support']
-            },
-            {
-                'id': 2,
-                'type': 'infrastructure',
-                'subtype': 'power_outage',
-                'location': 'Downtown',
-                'severity': 0.6,
-                'status': 'resolved',
-                'resources_needed': ['generators', 'technical_support']
-            },
-            {
-                'id': 3,
-                'type': 'public_health',
-                'subtype': 'outbreak',
-                'location': 'Tenderloin',
-                'severity': 0.7,
-                'status': 'monitoring',
-                'resources_needed': ['medical_supplies', 'testing_equipment']
-            }
+    def _fetch_crisis_data(self, location: str) -> List[Dict[str, Any]]:
+        """Simulate crisis event data fetch."""
+        mock_crisis_events = [
+            {'id': 1, 'type': 'medical', 'location': 'Tenderloin', 'severity': 0.8, 'description': 'Overdose incident'},
+            {'id': 2, 'type': 'safety', 'location': 'Mission District', 'severity': 0.6, 'description': 'Fire emergency'},
+            {'id': 3, 'type': 'infrastructure', 'location': 'Downtown', 'severity': 0.9, 'description': 'Power outage'}
         ]
-        return mock_crises
+        return mock_crisis_events
     
-    def _assess_coordination_needs(self, crisis_events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Assess coordination needs for crisis response."""
-        coordination_needs = []
+    def _detect_escalation_patterns(self, crisis_events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Detect escalation patterns in crisis events."""
+        patterns = []
         
-        for crisis in crisis_events:
-            if crisis.get('severity', 0) > 0.6:
-                coordination_needs.append({
-                    'crisis_id': crisis['id'],
-                    'coordination_type': 'multi_agency',
-                    'agencies_needed': ['police', 'fire', 'ems'],
-                    'communication_priority': 'high',
-                    'resource_coordination': crisis.get('resources_needed', [])
+        # Detect patterns by type
+        type_counts = {}
+        for event in crisis_events:
+            event_type = event['type']
+            if event_type not in type_counts:
+                type_counts[event_type] = 0
+            type_counts[event_type] += 1
+        
+        # Identify escalating patterns
+        for event_type, count in type_counts.items():
+            if count > 1:
+                patterns.append({
+                    'type': 'escalation_pattern',
+                    'crisis_type': event_type,
+                    'frequency': count,
+                    'severity': np.mean([e['severity'] for e in crisis_events if e['type'] == event_type]),
+                    'description': f"Escalating {event_type} crisis pattern"
                 })
         
-        return coordination_needs
+        return patterns
     
-    def _detect_prevention_chains(self, crisis_events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Detect holistic prevention chains for crisis coordination."""
-        prevention_chains = []
+    def _coordinate_response_teams(self, crisis_events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Coordinate response teams for crisis events."""
+        coordination = []
         
-        # Level-up: Holistic prevention chain detection
-        for crisis in crisis_events:
-            if crisis.get('severity', 0) > 0.7:
-                chain = {
-                    'crisis_type': crisis['type'],
-                    'location': crisis['location'],
-                    'coordination_plan': {
-                        'immediate_response': ['first_responders', 'evacuation'],
-                        'secondary_response': ['support_services', 'communication'],
-                        'prevention_measures': ['early_warning', 'preparedness_training']
-                    },
-                    'resources': crisis.get('resources_needed', []),
-                    'prevention_effectiveness': 0.85
-                }
-                prevention_chains.append(chain)
+        for event in crisis_events:
+            if event['type'] == 'medical':
+                coordination.append({
+                    'type': 'response_coordination',
+                    'crisis_id': event['id'],
+                    'teams': ['ambulance', 'mental_health', 'social_services'],
+                    'priority': 'high' if event['severity'] > 0.7 else 'medium'
+                })
+            elif event['type'] == 'safety':
+                coordination.append({
+                    'type': 'response_coordination',
+                    'crisis_id': event['id'],
+                    'teams': ['fire', 'police', 'emergency_services'],
+                    'priority': 'high'
+                })
+            elif event['type'] == 'infrastructure':
+                coordination.append({
+                    'type': 'response_coordination',
+                    'crisis_id': event['id'],
+                    'teams': ['utilities', 'emergency_services', 'communications'],
+                    'priority': 'high' if event['severity'] > 0.8 else 'medium'
+                })
         
-        return prevention_chains
+        return coordination
     
     def _predict_crisis_escalation(self, crisis_events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Predict crisis escalation patterns."""
-        escalation_predictions = []
+        predictions = []
         
-        for crisis in crisis_events:
-            if crisis.get('status') == 'active':
-                escalation_predictions.append({
-                    'crisis_id': crisis['id'],
-                    'escalation_probability': 0.6,
-                    'time_to_escalation': '2-4 hours',
-                    'affected_area_expansion': 'likely',
-                    'resource_intensification': 'high'
-                })
-        
-        return escalation_predictions
-    
-    def _predict_resource_needs(self, crisis_events: List[Dict[str, Any]], prevention_chains: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Predict resource needs with prevention integration."""
-        resource_predictions = []
-        
-        # Level-up: Resource prediction with prevention integration
-        for chain in prevention_chains:
-            resource_predictions.append({
-                'crisis_type': chain['crisis_type'],
-                'location': chain['location'],
-                'immediate_resources': chain['resources'],
-                'prevention_resources': ['training_materials', 'early_warning_systems'],
-                'coordination_resources': ['communication_systems', 'coordination_platforms'],
-                'estimated_cost': 500000,
-                'prevention_roi': 3.2  # 320% return on prevention investment
+        # Predict based on severity patterns
+        high_severity_events = [e for e in crisis_events if e['severity'] > 0.7]
+        if len(high_severity_events) > 1:
+            predictions.append({
+                'type': 'crisis_escalation',
+                'prediction': 'Escalating high-severity crisis pattern',
+                'affected_areas': [e['location'] for e in high_severity_events],
+                'confidence': 0.8
             })
         
-        return resource_predictions
+        # Predict individual escalations
+        for event in crisis_events:
+            if event['severity'] > 0.8:
+                predictions.append({
+                    'type': 'crisis_escalation',
+                    'location': event['location'],
+                    'prediction': f"High risk of {event['type']} crisis escalation",
+                    'confidence': 0.75
+                })
+        
+        return predictions
     
-    def _generate_holistic_strategies(self, crisis_events: List[Dict[str, Any]], prevention_chains: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Generate holistic prevention strategies."""
-        holistic_strategies = []
+    def _predict_resource_needs(self, crisis_events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Predict resource needs for crisis response."""
+        predictions = []
         
-        # Level-up: Holistic prevention integration
-        for chain in prevention_chains:
-            strategy = {
-                'type': 'holistic_prevention',
-                'crisis_type': chain['crisis_type'],
-                'coordination_approach': 'multi_agency_integration',
-                'prevention_measures': [
-                    'early_warning_systems',
-                    'community_preparedness_training',
-                    'resource_prepositioning',
-                    'cross_agency_coordination'
-                ],
-                'expected_outcome': 'reduced_response_time_and_impact',
-                'implementation_timeline': '6-12 months'
-            }
-            holistic_strategies.append(strategy)
+        # Predict medical resource needs
+        medical_events = [e for e in crisis_events if e['type'] == 'medical']
+        if medical_events:
+            predictions.append({
+                'type': 'resource_needs',
+                'category': 'medical',
+                'prediction': 'Increased medical response resources needed',
+                'affected_areas': [e['location'] for e in medical_events],
+                'confidence': 0.7
+            })
         
-        return holistic_strategies 
+        # Predict safety resource needs
+        safety_events = [e for e in crisis_events if e['type'] == 'safety']
+        if safety_events:
+            predictions.append({
+                'type': 'resource_needs',
+                'category': 'safety',
+                'prediction': 'Increased safety response resources needed',
+                'affected_areas': [e['location'] for e in safety_events],
+                'confidence': 0.7
+            })
+        
+        return predictions
+    
+    def _predict_response_effectiveness(self, crisis_events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Predict response effectiveness for crisis events."""
+        predictions = []
+        
+        for event in crisis_events:
+            if event['severity'] > 0.7:
+                predictions.append({
+                    'type': 'response_effectiveness',
+                    'crisis_id': event['id'],
+                    'prediction': 'High-priority response coordination needed',
+                    'response_time': 'immediate',
+                    'confidence': 0.8
+                })
+        
+        return predictions
+    
+    def _generate_crisis_strategies(self, crisis_events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Generate crisis prevention strategies."""
+        strategies = []
+        
+        for event in crisis_events:
+            if event['type'] == 'medical':
+                strategies.append({
+                    'type': 'crisis_prevention',
+                    'target': event['location'],
+                    'action': 'Deploy medical response teams',
+                    'priority': 'high' if event['severity'] > 0.7 else 'medium'
+                })
+            elif event['type'] == 'safety':
+                strategies.append({
+                    'type': 'crisis_prevention',
+                    'target': event['location'],
+                    'action': 'Deploy safety patrols',
+                    'priority': 'high'
+                })
+            elif event['type'] == 'infrastructure':
+                strategies.append({
+                    'type': 'crisis_prevention',
+                    'target': event['location'],
+                    'action': 'Infrastructure maintenance check',
+                    'priority': 'high' if event['severity'] > 0.8 else 'medium'
+                })
+        
+        return strategies
+    
+    def _generate_holistic_strategies(self, crisis_events: List[Dict[str, Any]], escalation_predictions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Generate holistic coordination strategies."""
+        strategies = []
+        
+        # Generate cross-agency coordination strategies
+        if len(crisis_events) > 2:
+            strategies.append({
+                'type': 'holistic_coordination',
+                'action': 'Establish cross-agency crisis response protocol',
+                'agencies': ['police', 'fire', 'medical', 'social_services'],
+                'priority': 'high'
+            })
+        
+        # Generate escalation prevention strategies
+        for prediction in escalation_predictions:
+            if prediction['type'] == 'crisis_escalation':
+                strategies.append({
+                    'type': 'holistic_coordination',
+                    'action': 'Deploy escalation prevention teams',
+                    'target_areas': prediction.get('affected_areas', []),
+                    'priority': 'high'
+                })
+        
+        return strategies
+    
+    def _generate_resource_strategies(self, crisis_events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Generate resource allocation strategies."""
+        strategies = []
+        
+        # Generate resource allocation based on crisis types
+        medical_events = [e for e in crisis_events if e['type'] == 'medical']
+        if medical_events:
+            strategies.append({
+                'type': 'resource_allocation',
+                'category': 'medical',
+                'action': 'Increase medical response capacity',
+                'target_areas': [e['location'] for e in medical_events],
+                'priority': 'high'
+            })
+        
+        safety_events = [e for e in crisis_events if e['type'] == 'safety']
+        if safety_events:
+            strategies.append({
+                'type': 'resource_allocation',
+                'category': 'safety',
+                'action': 'Increase safety response capacity',
+                'target_areas': [e['location'] for e in safety_events],
+                'priority': 'high'
+            })
+        
+        return strategies 

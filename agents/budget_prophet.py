@@ -6,123 +6,121 @@ import requests
 from .base_agent import BaseAgent, AgentMode
 
 class BudgetProphet(BaseAgent):
-    """Budget Prophet Agent: Predicts funding allocation with federal simulation for Bay Area disparities."""
+    """Budget Prophet Agent: Predicts funding allocation with federal simulations and Bay Area disparities."""
     
     def __init__(self):
         super().__init__("Budget Prophet", threshold=0.8)
-        self.funding_categories = {
-            'housing': ['homeless_services', 'affordable_housing', 'rental_assistance'],
-            'infrastructure': ['street_maintenance', 'public_transport', 'utilities'],
-            'social_services': ['healthcare', 'education', 'food_assistance']
-        }
-        self.federal_funding_sources = {
-            'hud': 'Housing and Urban Development',
-            'dot': 'Department of Transportation',
-            'hhs': 'Health and Human Services'
-        }
-        # Level-up: Funding maps with homeless alignment
         self.funding_maps = {
             'homeless_hotspots': ['Tenderloin', 'Mission District', 'South of Market', 'Civic Center'],
             'funding_priorities': ['emergency_shelter', 'permanent_housing', 'support_services', 'prevention'],
             'geographic_impact': ['high', 'medium', 'low']
         }
+        self.federal_programs = {
+            'HUD': ['Section 8', 'CDBG', 'HOME'],
+            'HHS': ['SNAP', 'TANF', 'Medicaid'],
+            'DOT': ['Highway Trust Fund', 'Transit Grants']
+        }
         
     def detect(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Detect current funding allocations and gaps."""
+        """Detect current budget allocations and funding opportunities."""
         # Simulate current budget data
-        current_allocations = self._fetch_current_allocations(data.get('location', 'San Francisco'))
-        funding_gaps = self._detect_funding_gaps(current_allocations)
+        current_allocations = self._fetch_budget_data(data.get('location', 'San Francisco'))
         
-        # Level-up: Federal funding simulation
-        federal_opportunities = self._simulate_federal_funding(current_allocations)
+        # Simulate federal funding opportunities
+        federal_opportunities = self._fetch_federal_opportunities()
         
-        confidence = min(0.9, len(current_allocations) * 0.1 + len(funding_gaps) * 0.15 + len(federal_opportunities) * 0.2)
+        # Detect funding disparities
+        disparities = self._detect_funding_disparities(current_allocations)
+        
+        # Calculate confidence
+        confidence = min(0.9, len(current_allocations) * 0.1 + len(federal_opportunities) * 0.15)
         self.update_confidence(confidence)
         
-        self.add_level_up_feature('federal_simulation', federal_opportunities)
+        # Level-up: Federal simulation
+        self.add_level_up_feature('federal_simulation', len(federal_opportunities))
         
         return {
             'current_allocations': current_allocations,
-            'funding_gaps': funding_gaps,
             'federal_opportunities': federal_opportunities,
+            'funding_disparities': disparities,
             'confidence': confidence,
             'mode': 'detect',
             'level_up_message': f"Federal funding sim: {len(federal_opportunities)} opportunities detected"
         }
     
     def predict(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Predict funding drops/spikes with federal simulation."""
+        """Predict funding trends and budget impacts."""
         current_allocations = data.get('current_allocations', [])
         federal_opportunities = data.get('federal_opportunities', [])
         
         # Predict funding trends
-        funding_predictions = self._predict_funding_trends(current_allocations)
+        funding_trends = self._predict_funding_trends(current_allocations)
         
-        # Level-up: Federal funding maps for Bay Area disparities
-        bay_area_disparities = self._simulate_bay_area_disparities(federal_opportunities)
+        # Predict budget shortfalls
+        budget_shortfalls = self._predict_budget_shortfalls(current_allocations)
         
-        confidence = min(0.85, len(funding_predictions) * 0.1 + len(bay_area_disparities) * 0.15)
+        # Predict ROI for different programs
+        roi_predictions = self._predict_program_roi(federal_opportunities)
+        
+        # Combine all predictions
+        all_predictions = funding_trends + budget_shortfalls + roi_predictions
+        
+        confidence = min(0.85, len(all_predictions) * 0.15)
         self.update_confidence(confidence)
         
-        self.add_level_up_feature('bay_area_disparities', bay_area_disparities)
-        
         return {
-            'funding_predictions': funding_predictions,
-            'bay_area_disparities': bay_area_disparities,
+            'funding_predictions': all_predictions,
+            'funding_trends': funding_trends,
+            'budget_shortfalls': budget_shortfalls,
+            'roi_predictions': roi_predictions,
             'confidence': confidence,
             'mode': 'predict',
-            'level_up_message': f"Bay Area disparities mapped - {len(bay_area_disparities)} funding gaps"
+            'level_up_message': f"Funding trends predicted with {len(roi_predictions)} ROI forecasts"
         }
     
     def prevent(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate reallocation strategies with federal funding integration."""
-        funding_gaps = data.get('funding_gaps', [])
+        """Generate budget reallocation strategies with federal funding."""
+        current_allocations = data.get('current_allocations', [])
         federal_opportunities = data.get('federal_opportunities', [])
-        bay_area_disparities = data.get('bay_area_disparities', [])
-        
-        reallocation_strategies = []
+        funding_predictions = data.get('funding_predictions', [])
         
         # Generate reallocation strategies
-        for gap in funding_gaps:
-            if gap.get('severity', 0) > 0.7:
-                strategy = {
-                    'type': 'reallocation',
-                    'category': gap.get('category'),
-                    'amount': gap.get('shortfall'),
-                    'source': 'general_fund',
-                    'priority': 'high'
-                }
-                reallocation_strategies.append(strategy)
+        reallocation_strategies = self._generate_reallocation_strategies(current_allocations, funding_predictions)
         
-        # Level-up: Federal funding integration
-        federal_strategies = self._generate_federal_strategies(federal_opportunities, bay_area_disparities)
+        # Generate federal funding strategies
+        federal_strategies = self._generate_federal_strategies(federal_opportunities)
         
-        confidence = min(0.8, len(reallocation_strategies) * 0.15 + len(federal_strategies) * 0.1)
+        # Generate homeless alignment strategies
+        homeless_strategies = self._generate_homeless_strategies(current_allocations)
+        
+        # Combine all strategies
+        all_strategies = reallocation_strategies + federal_strategies + homeless_strategies
+        
+        confidence = min(0.8, len(all_strategies) * 0.15)
         self.update_confidence(confidence)
         
-        self.add_level_up_feature('federal_strategies', federal_strategies)
-        
         return {
-            'strategies': reallocation_strategies,
+            'strategies': all_strategies,
             'federal_strategies': federal_strategies,
+            'reallocation_strategies': reallocation_strategies,
+            'homeless_strategies': homeless_strategies,
             'confidence': confidence,
             'mode': 'prevent',
-            'level_up_message': f"Federal funding integration - {len(federal_strategies)} strategies"
+            'level_up_message': f"Developed {len(federal_strategies)} federal strategies"
         }
     
     def broadcast(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Broadcast budget findings to other agents."""
-        allocations = data.get('current_allocations', [])
-        predictions = data.get('funding_predictions', [])
+        current_allocations = data.get('current_allocations', [])
+        funding_predictions = data.get('funding_predictions', [])
         strategies = data.get('strategies', [])
-        federal_strategies = data.get('federal_strategies', [])
         
         broadcast_data = {
-            'budget_allocations': allocations,
-            'predictions': predictions,
-            'reallocation_strategies': strategies,
-            'federal_strategies': federal_strategies,
-            'bay_area_disparities': data.get('bay_area_disparities', [])
+            'budget_allocations': current_allocations,
+            'funding_predictions': funding_predictions,
+            'prevention_strategies': strategies,
+            'federal_opportunities': data.get('federal_opportunities', []),
+            'funding_disparities': data.get('funding_disparities', [])
         }
         
         confidence = min(0.9, len(broadcast_data) * 0.1)
@@ -132,131 +130,44 @@ class BudgetProphet(BaseAgent):
             'broadcast_data': broadcast_data,
             'confidence': confidence,
             'mode': 'broadcast',
-            'level_up_message': f"Broadcasting budget data with federal funding maps"
+            'level_up_message': f"Broadcasting {len(current_allocations)} budget items with federal opportunities"
         }
     
-    def _fetch_current_allocations(self, location: str) -> List[Dict[str, Any]]:
-        """Simulate current budget allocation data."""
-        mock_allocations = [
-            {'category': 'housing', 'amount': 50000000, 'year': 2024, 'source': 'general_fund'},
-            {'category': 'infrastructure', 'amount': 75000000, 'year': 2024, 'source': 'general_fund'},
-            {'category': 'social_services', 'amount': 30000000, 'year': 2024, 'source': 'general_fund'},
-            {'category': 'homeless_services', 'amount': 25000000, 'year': 2024, 'source': 'federal'},
-            {'category': 'public_transport', 'amount': 40000000, 'year': 2024, 'source': 'federal'}
+    def _fetch_budget_data(self, location: str) -> List[Dict[str, Any]]:
+        """Simulate budget data fetch."""
+        mock_budget_items = [
+            {'id': 1, 'category': 'homeless_services', 'amount': 50000000, 'location': 'Tenderloin', 'priority': 'high'},
+            {'id': 2, 'category': 'housing_development', 'amount': 75000000, 'location': 'Mission District', 'priority': 'high'},
+            {'id': 3, 'category': 'street_maintenance', 'amount': 30000000, 'location': 'Downtown', 'priority': 'medium'},
+            {'id': 4, 'category': 'public_safety', 'amount': 45000000, 'location': 'Civic Center', 'priority': 'high'},
+            {'id': 5, 'category': 'social_services', 'amount': 25000000, 'location': 'South of Market', 'priority': 'medium'}
         ]
-        return mock_allocations
+        return mock_budget_items
     
-    def _detect_funding_gaps(self, allocations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Detect funding gaps and shortfalls."""
-        gaps = []
-        
-        # Simulate gap detection
-        expected_funding = {
-            'housing': 60000000,
-            'infrastructure': 80000000,
-            'social_services': 35000000
-        }
-        
-        for allocation in allocations:
-            category = allocation['category']
-            if category in expected_funding:
-                expected = expected_funding[category]
-                actual = allocation['amount']
-                shortfall = expected - actual
-                
-                if shortfall > 0:
-                    gaps.append({
-                        'category': category,
-                        'shortfall': shortfall,
-                        'severity': min(1.0, shortfall / expected),
-                        'description': f"Underfunded {category} by ${shortfall:,}"
-                    })
-        
-        return gaps
-    
-    def _simulate_federal_funding(self, allocations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _fetch_federal_opportunities(self) -> List[Dict[str, Any]]:
         """Simulate federal funding opportunities."""
-        opportunities = []
-        
-        # Level-up: Federal funding simulation for Bay Area
-        federal_programs = [
-            {
-                'program': 'HUD Community Development Block Grant',
-                'amount': 15000000,
-                'eligibility': 'high_poverty_areas',
-                'application_deadline': '2024-12-31'
-            },
-            {
-                'program': 'DOT Infrastructure Investment',
-                'amount': 25000000,
-                'eligibility': 'transportation_projects',
-                'application_deadline': '2024-10-15'
-            },
-            {
-                'program': 'HHS Social Services Block Grant',
-                'amount': 8000000,
-                'eligibility': 'social_services',
-                'application_deadline': '2024-11-30'
-            }
+        mock_opportunities = [
+            {'id': 1, 'program': 'HUD Section 8', 'amount': 20000000, 'roi_multiplier': 1.5, 'probability': 0.8},
+            {'id': 2, 'program': 'CDBG Grant', 'amount': 15000000, 'roi_multiplier': 1.3, 'probability': 0.7},
+            {'id': 3, 'program': 'HOME Investment', 'amount': 10000000, 'roi_multiplier': 1.4, 'probability': 0.6}
         ]
-        
-        for program in federal_programs:
-            opportunities.append({
-                'program': program['program'],
-                'amount': program['amount'],
-                'eligibility': program['eligibility'],
-                'deadline': program['application_deadline'],
-                'probability': 0.7,  # 70% chance of approval
-                'impact': 'high'
-            })
-        
-        return opportunities
+        return mock_opportunities
     
-    def _predict_funding_trends(self, allocations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Predict funding drops and spikes."""
-        predictions = []
-        
-        # Simulate funding trend predictions
-        for allocation in allocations:
-            category = allocation['category']
-            current_amount = allocation['amount']
-            
-            # Predict based on category and current funding
-            if category == 'housing':
-                predicted_change = 0.15  # 15% increase
-            elif category == 'infrastructure':
-                predicted_change = 0.10  # 10% increase
-            else:
-                predicted_change = 0.05  # 5% increase
-            
-            predictions.append({
-                'category': category,
-                'current_amount': current_amount,
-                'predicted_change': predicted_change,
-                'predicted_amount': current_amount * (1 + predicted_change),
-                'confidence': 0.8
-            })
-        
-        return predictions
-    
-    def _simulate_bay_area_disparities(self, federal_opportunities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Simulate Bay Area funding disparities with homeless alignment."""
+    def _detect_funding_disparities(self, current_allocations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Detect funding disparities using Bay Area simulation."""
         disparities = []
         
-        # Level-up: Bay Area disparities mapping with homeless hotspots
+        # Simulate Bay Area regions with homeless alignment
         bay_area_regions = [
-            {'region': 'San Francisco', 'poverty_rate': 0.12, 'funding_per_capita': 2500, 'homeless_population': 8000},
-            {'region': 'Oakland', 'poverty_rate': 0.18, 'funding_per_capita': 1800, 'homeless_population': 4000},
-            {'region': 'San Jose', 'poverty_rate': 0.08, 'funding_per_capita': 2200, 'homeless_population': 6000},
-            {'region': 'Richmond', 'poverty_rate': 0.22, 'funding_per_capita': 1500, 'homeless_population': 2000}
+            {'region': 'San Francisco', 'poverty_rate': 0.12, 'homeless_population': 8000, 'funding_per_capita': 1500},
+            {'region': 'Oakland', 'poverty_rate': 0.18, 'homeless_population': 4000, 'funding_per_capita': 1200},
+            {'region': 'San Jose', 'poverty_rate': 0.10, 'homeless_population': 6000, 'funding_per_capita': 1800},
+            {'region': 'Berkeley', 'poverty_rate': 0.15, 'homeless_population': 2000, 'funding_per_capita': 2000}
         ]
         
         for region in bay_area_regions:
-            # Enhanced disparity calculation with homeless alignment
-            homeless_factor = region['homeless_population'] / 10000  # Normalize to 0-1 scale
+            homeless_factor = region['homeless_population'] / 10000
             poverty_factor = region['poverty_rate']
-            
-            # Calculate composite need score
             need_score = (homeless_factor * 0.6) + (poverty_factor * 0.4)
             
             if need_score > 0.15 and region['funding_per_capita'] < 2000:
@@ -276,27 +187,123 @@ class BudgetProphet(BaseAgent):
     def _get_funding_priorities(self, region: str) -> List[str]:
         """Get funding priorities based on region characteristics."""
         if region == 'San Francisco':
-            return ['permanent_housing', 'support_services', 'emergency_shelter']
+            return ['emergency_shelter', 'permanent_housing', 'support_services']
         elif region == 'Oakland':
-            return ['emergency_shelter', 'permanent_housing', 'prevention']
+            return ['permanent_housing', 'prevention', 'support_services']
         elif region == 'San Jose':
-            return ['support_services', 'permanent_housing', 'prevention']
+            return ['support_services', 'emergency_shelter', 'prevention']
         else:
-            return ['emergency_shelter', 'support_services', 'prevention']
+            return ['prevention', 'support_services', 'emergency_shelter']
     
-    def _generate_federal_strategies(self, opportunities: List[Dict[str, Any]], disparities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _predict_funding_trends(self, current_allocations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Predict funding trends based on current allocations."""
+        trends = []
+        
+        # Predict trends by category
+        categories = {}
+        for allocation in current_allocations:
+            category = allocation['category']
+            if category not in categories:
+                categories[category] = []
+            categories[category].append(allocation['amount'])
+        
+        for category, amounts in categories.items():
+            avg_amount = np.mean(amounts)
+            trend = 'increasing' if avg_amount > 40000000 else 'stable' if avg_amount > 20000000 else 'decreasing'
+            
+            trends.append({
+                'type': 'funding_trend',
+                'category': category,
+                'prediction': f"{trend.capitalize()} funding trend",
+                'current_average': avg_amount,
+                'confidence': 0.75
+            })
+        
+        return trends
+    
+    def _predict_budget_shortfalls(self, current_allocations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Predict budget shortfalls."""
+        shortfalls = []
+        
+        total_budget = sum(allocation['amount'] for allocation in current_allocations)
+        projected_needs = total_budget * 1.2  # 20% increase needed
+        
+        if projected_needs > total_budget:
+            shortfalls.append({
+                'type': 'budget_shortfall',
+                'prediction': 'Projected budget shortfall',
+                'current_budget': total_budget,
+                'projected_needs': projected_needs,
+                'shortfall_amount': projected_needs - total_budget,
+                'confidence': 0.8
+            })
+        
+        return shortfalls
+    
+    def _predict_program_roi(self, federal_opportunities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Predict ROI for different federal programs."""
+        roi_predictions = []
+        
+        for opportunity in federal_opportunities:
+            roi_predictions.append({
+                'type': 'program_roi',
+                'program': opportunity['program'],
+                'prediction': f"ROI multiplier: {opportunity['roi_multiplier']}x",
+                'amount': opportunity['amount'],
+                'probability': opportunity['probability'],
+                'confidence': 0.7
+            })
+        
+        return roi_predictions
+    
+    def _generate_reallocation_strategies(self, current_allocations: List[Dict[str, Any]], funding_predictions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Generate budget reallocation strategies."""
+        strategies = []
+        
+        # Generate strategies based on funding trends
+        for prediction in funding_predictions:
+            if prediction['type'] == 'funding_trend':
+                if 'decreasing' in prediction['prediction']:
+                    strategies.append({
+                        'type': 'reallocation',
+                        'target': prediction['category'],
+                        'action': 'Increase funding allocation',
+                        'priority': 'high' if prediction['current_average'] < 20000000 else 'medium'
+                    })
+        
+        return strategies
+    
+    def _generate_federal_strategies(self, federal_opportunities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Generate federal funding strategies."""
         strategies = []
         
-        for opportunity in opportunities:
-            if opportunity.get('probability', 0) > 0.6:
+        for opportunity in federal_opportunities:
+            if opportunity['probability'] > 0.6:
                 strategies.append({
-                    'type': 'federal_grant',
-                    'program': opportunity['program'],
+                    'type': 'federal',
+                    'target': opportunity['program'],
+                    'action': f"Apply for {opportunity['program']} funding",
                     'amount': opportunity['amount'],
-                    'target_regions': [d['region'] for d in disparities],
-                    'application_strategy': 'high_priority',
-                    'expected_roi': 2.5  # 250% return on application effort
+                    'priority': 'high' if opportunity['roi_multiplier'] > 1.4 else 'medium'
+                })
+        
+        return strategies
+    
+    def _generate_homeless_strategies(self, current_allocations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Generate homeless alignment strategies."""
+        strategies = []
+        
+        homeless_allocations = [a for a in current_allocations if a['category'] == 'homeless_services']
+        if homeless_allocations:
+            total_homeless_funding = sum(a['amount'] for a in homeless_allocations)
+            
+            if total_homeless_funding < 60000000:  # Threshold for adequate funding
+                strategies.append({
+                    'type': 'homeless',
+                    'action': 'Increase homeless services funding',
+                    'current_amount': total_homeless_funding,
+                    'recommended_amount': 60000000,
+                    'priority': 'high'
                 })
         
         return strategies 

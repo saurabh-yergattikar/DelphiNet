@@ -56,14 +56,21 @@ class StreetPrecog(BaseAgent):
         # Level-up: Rain/SSI + gross patterns prediction
         rain_predictions = self._predict_rain_impact(weather_data)
         
-        confidence = min(0.9, len(predictions) * 0.15 + len(rain_predictions) * 0.1)
+        # Generate additional predictions based on patterns
+        pattern_predictions = self._predict_pattern_based_issues(current_issues)
+        
+        # Combine all predictions
+        all_predictions = predictions + rain_predictions + pattern_predictions
+        
+        confidence = min(0.9, len(all_predictions) * 0.15)
         self.update_confidence(confidence)
         
-        self.add_level_up_feature('weather_predictions', rain_predictions)
+        self.add_level_up_feature('weather_predictions', len(rain_predictions))
         
         return {
-            'predictions': predictions,
+            'predictions': all_predictions,
             'rain_impact': rain_predictions,
+            'pattern_predictions': pattern_predictions,
             'confidence': confidence,
             'mode': 'predict',
             'level_up_message': f"Rain/SSI + gross patterns predicted"
@@ -86,6 +93,14 @@ class StreetPrecog(BaseAgent):
                     'priority': 'high' if issue.get('severity', 0) > 0.7 else 'medium'
                 }
                 prevention_strategies.append(strategy)
+        
+        # Generate maintenance strategies
+        maintenance_strategies = self._generate_maintenance_strategies(current_issues)
+        prevention_strategies.extend(maintenance_strategies)
+        
+        # Generate safety strategies
+        safety_strategies = self._generate_safety_strategies(current_issues)
+        prevention_strategies.extend(safety_strategies)
         
         confidence = min(0.85, len(prevention_strategies) * 0.2)
         self.update_confidence(confidence)
@@ -192,4 +207,67 @@ class StreetPrecog(BaseAgent):
                 'confidence': 0.75
             })
         
-        return rain_predictions 
+        return rain_predictions
+    
+    def _predict_pattern_based_issues(self, current_issues: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Predict issues based on detected patterns."""
+        pattern_predictions = []
+        
+        # Predict based on location patterns
+        for issue in current_issues:
+            if issue['type'] == 'gross' and issue['location'] == 'Market St':
+                pattern_predictions.append({
+                    'type': 'pattern_prediction',
+                    'location': 'Market St',
+                    'prediction': 'Continued trash accumulation pattern',
+                    'confidence': 0.7
+                })
+        
+        # Predict based on issue type patterns
+        gross_issues = [i for i in current_issues if i['type'] == 'gross']
+        if len(gross_issues) > 2:
+            pattern_predictions.append({
+                'type': 'pattern_prediction',
+                'prediction': 'Escalating gross issue pattern',
+                'affected_areas': [i['location'] for i in gross_issues],
+                'confidence': 0.8
+            })
+        
+        return pattern_predictions
+    
+    def _generate_maintenance_strategies(self, issues: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Generate maintenance-based prevention strategies."""
+        strategies = []
+        
+        for issue in issues:
+            if issue['type'] == 'safety':
+                strategies.append({
+                    'type': 'maintenance',
+                    'target': issue['location'],
+                    'action': 'Schedule safety inspection',
+                    'priority': 'high' if issue['severity'] > 0.7 else 'medium'
+                })
+            elif issue['type'] == 'accessibility':
+                strategies.append({
+                    'type': 'maintenance',
+                    'target': issue['location'],
+                    'action': 'Schedule accessibility repair',
+                    'priority': 'medium'
+                })
+        
+        return strategies
+    
+    def _generate_safety_strategies(self, issues: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Generate safety-based prevention strategies."""
+        strategies = []
+        
+        safety_issues = [i for i in issues if i['type'] == 'safety']
+        if safety_issues:
+            strategies.append({
+                'type': 'safety',
+                'action': 'Deploy safety patrols',
+                'target_areas': [i['location'] for i in safety_issues],
+                'priority': 'high'
+            })
+        
+        return strategies 

@@ -73,7 +73,15 @@ class Orchestrator:
         
         for agent_name, agent in self.agents.items():
             agent.set_mode(agent.mode.__class__.DETECT)
-            result = agent.execute(scenario_data)
+            
+            # Prepare data with the structure agents expect
+            agent_data = {
+                'location': scenario_data.get('location', 'San Francisco'),
+                'weather': scenario_data.get('weather', {'rain_probability': 0.6}),
+                'timestamp': scenario_data.get('timestamp', '2024-01-15')
+            }
+            
+            result = agent.execute(agent_data)
             detection_results[agent_name] = result
             
             # Level-up: Show detection status with challenge alignments
@@ -95,38 +103,78 @@ class Orchestrator:
         
         for agent_name, agent in self.agents.items():
             agent.set_mode(agent.mode.__class__.PREDICT)
-            result = agent.execute(combined_data)
+            
+            # Prepare data with detection results for each agent
+            agent_data = {
+                'location': 'San Francisco',
+                'weather': {'rain_probability': 0.6},
+                'timestamp': '2024-01-15'
+            }
+            
+            # Add agent-specific detection data from the detection phase
+            if agent_name == 'street_precog':
+                street_detection = detection_results.get('street_precog', {})
+                agent_data['issues_detected'] = street_detection.get('issues_detected', [])
+                agent_data['qr_patterns'] = street_detection.get('qr_patterns', [])
+            elif agent_name == 'housing_oracle':
+                housing_detection = detection_results.get('housing_oracle', {})
+                agent_data['evictions'] = housing_detection.get('evictions', [])
+                agent_data['parcel_issues'] = housing_detection.get('parcel_issues', [])
+            elif agent_name == 'budget_prophet':
+                budget_detection = detection_results.get('budget_prophet', {})
+                agent_data['current_allocations'] = budget_detection.get('current_allocations', [])
+                agent_data['federal_opportunities'] = budget_detection.get('federal_opportunities', [])
+            elif agent_name == 'crisis_sage':
+                crisis_detection = detection_results.get('crisis_sage', {})
+                agent_data['crisis_events'] = crisis_detection.get('crisis_events', [])
+                agent_data['escalation_patterns'] = crisis_detection.get('escalation_patterns', [])
+            
+            result = agent.execute(agent_data)
             prediction_results[agent_name] = result
             
-            # Level-up: Show prediction status with challenge alignments
-            level_up_status = result.get('level_up_status', {})
             st.success(f"🔮 {agent_name}: {result.get('level_up_message', 'Prediction completed')}")
-            
-            if level_up_status.get('level_up_features'):
-                for feature, data in level_up_status['level_up_features'].items():
-                    st.info(f"🎯 Level-up: {feature} - {len(data) if isinstance(data, list) else data}")
         
         return prediction_results
     
     def _run_prevention_phase(self, prediction_results: Dict[str, Any]) -> Dict[str, Any]:
-        """Run prevention phase with holistic strategies."""
+        """Run prevention phase with coordinated strategies."""
         prevention_results = {}
         
-        # Combine prediction data for coordinated prevention
+        # Combine prediction data for cross-agent prevention
         combined_data = self._combine_prediction_data(prediction_results)
         
         for agent_name, agent in self.agents.items():
             agent.set_mode(agent.mode.__class__.PREVENT)
-            result = agent.execute(combined_data)
+            
+            # Prepare data with prediction results for each agent
+            agent_data = {
+                'location': 'San Francisco',
+                'weather': {'rain_probability': 0.6},
+                'timestamp': '2024-01-15'
+            }
+            
+            # Add agent-specific prediction data from the prediction phase
+            if agent_name == 'street_precog':
+                street_prediction = prediction_results.get('street_precog', {})
+                agent_data['predictions'] = street_prediction.get('predictions', [])
+                agent_data['issues_detected'] = street_prediction.get('issues_detected', [])
+            elif agent_name == 'housing_oracle':
+                housing_prediction = prediction_results.get('housing_oracle', {})
+                agent_data['risk_predictions'] = housing_prediction.get('risk_predictions', [])
+                agent_data['evictions'] = housing_prediction.get('evictions', [])
+            elif agent_name == 'budget_prophet':
+                budget_prediction = prediction_results.get('budget_prophet', {})
+                agent_data['funding_predictions'] = budget_prediction.get('funding_predictions', [])
+                agent_data['current_allocations'] = budget_prediction.get('current_allocations', [])
+            elif agent_name == 'crisis_sage':
+                crisis_prediction = prediction_results.get('crisis_sage', {})
+                agent_data['escalation_predictions'] = crisis_prediction.get('escalation_predictions', [])
+                agent_data['crisis_events'] = crisis_prediction.get('crisis_events', [])
+            
+            result = agent.execute(agent_data)
             prevention_results[agent_name] = result
             
-            # Level-up: Show prevention status with challenge alignments
-            level_up_status = result.get('level_up_status', {})
             st.success(f"🛡️ {agent_name}: {result.get('level_up_message', 'Prevention completed')}")
-            
-            if level_up_status.get('level_up_features'):
-                for feature, data in level_up_status['level_up_features'].items():
-                    st.info(f"🎯 Level-up: {feature} - {len(data) if isinstance(data, list) else data}")
         
         return prevention_results
     
